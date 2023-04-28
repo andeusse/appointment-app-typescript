@@ -1,16 +1,18 @@
-require("./models/User");
+require('./models/User');
+require('./models/Appointment');
 
-import express, { Express } from "express";
-import cors from "cors";
-import { json } from "body-parser";
+import express, { Express } from 'express';
+import cors from 'cors';
+import { json } from 'body-parser';
 
-import { MongoDB } from "./database/mongo";
+import { MongoDB } from './database/mongo';
 
-import { handleError } from "./middlewares/errorHandler/ErrorHandlerMiddleware";
+import { handleError } from './middlewares/errorHandler/ErrorHandlerMiddleware';
 
-import authRoutes from "./routes/authRoutes";
-import statusRoutes from "./routes/statusRoutes";
-import Config from "./config/config";
+import authRoutes from './routes/authRoutes';
+import statusRoutes from './routes/statusRoutes';
+import applicationRoutes from './routes/appointmentRoutes';
+import Config from './config/config';
 
 const app: Express = express();
 const port = Config.getInstance().params.apiPort;
@@ -20,6 +22,7 @@ app.use(cors());
 
 app.use(authRoutes);
 app.use(statusRoutes);
+app.use(applicationRoutes);
 
 app.use(handleError);
 

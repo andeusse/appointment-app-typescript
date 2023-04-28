@@ -1,16 +1,16 @@
-import mongoose from "mongoose";
-import jwt from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express";
+import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+import { NextFunction, Request, Response } from 'express';
 
 import {
   IUser,
   RequestWithUser,
   UserIDJwtPayload,
   UserModel,
-} from "../../types/User";
-import Config from "../../config/config";
+} from '../../types/User';
+import Config from '../../config/config';
 
-const User = mongoose.model<IUser, UserModel>("User");
+const User = mongoose.model<IUser, UserModel>('User');
 
 const secretKet = Config.getInstance().params.secretKey;
 
@@ -18,13 +18,13 @@ const requireAuth = (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return res.status(401).send({ error: "You must be log in" });
+    return res.status(401).send({ error: 'You must be log in' });
   }
 
-  const token = authorization.replace("Bearer ", "");
+  const token = authorization.replace('Bearer ', '');
   jwt.verify(token, secretKet, async (err, payload) => {
     if (err) {
-      return res.status(401).send({ error: "You must be log in" });
+      return res.status(401).send({ error: 'You must be log in' });
     }
     const { userId } = <UserIDJwtPayload>payload;
 
@@ -32,7 +32,7 @@ const requireAuth = (req: Request, res: Response, next: NextFunction) => {
     if (user) {
       (<RequestWithUser>req).user = user;
     } else {
-      return res.status(401).send({ error: "User not found" });
+      return res.status(401).send({ error: 'User not found' });
     }
     next();
   });

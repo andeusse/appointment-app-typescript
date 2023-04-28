@@ -1,6 +1,6 @@
-import dotenv, { DotenvConfigOptions } from "dotenv";
+import dotenv, { DotenvConfigOptions } from 'dotenv';
 
-import { ConfigType } from "../types/config";
+import { ConfigType } from '../types/config';
 
 export default class Config {
   private static instance: Config;
@@ -15,15 +15,15 @@ export default class Config {
 
     this.params = {
       apiPort:
-        process.env.STATUS === "dev"
+        process.env.STATUS === 'dev'
           ? process.env.DEV_PORT!
           : process.env.PROD_PORT!,
       mongodbUrl:
-        process.env.STATUS === "dev"
+        process.env.STATUS === 'dev'
           ? process.env.DEV_DB!
           : process.env.PROD_DB!,
       secretKey:
-        process.env.STATUS === "dev"
+        process.env.STATUS === 'dev'
           ? process.env.DEV_SECRET_KEY!
           : process.env.PROD_SECRET_KEY!,
     };

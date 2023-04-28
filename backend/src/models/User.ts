@@ -1,6 +1,6 @@
-import mongoose, { Error } from "mongoose";
-import bcrypt from "bcrypt";
-import { IUser, IUserMethods, UserModel } from "../types/User";
+import mongoose, { Error } from 'mongoose';
+import bcrypt from 'bcrypt';
+import { IUser, IUserMethods, UserModel } from '../types/User';
 
 const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
   email: {
@@ -26,11 +26,10 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
 });
 
 userSchema.pre(
-  "save",
+  'save',
   function (next: mongoose.CallbackWithoutResultAndOptionalError) {
     const user = this;
-    console.log(user);
-    if (!user.isModified("password")) {
+    if (!user.isModified('password')) {
       return next();
     }
     bcrypt.genSalt(10, (err, salt) => {
@@ -67,4 +66,4 @@ userSchema.methods.comparePassword = function (candidatePassword: string) {
   });
 };
 
-mongoose.model("User", userSchema);
+mongoose.model('User', userSchema);

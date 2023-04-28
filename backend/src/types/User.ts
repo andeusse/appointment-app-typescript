@@ -1,14 +1,14 @@
-import { Request } from "express";
-import { JwtPayload } from "jsonwebtoken";
-import mongoose, { Model } from "mongoose";
-import { UserType } from "./usertype";
+import { Request } from 'express';
+import { JwtPayload } from 'jsonwebtoken';
+import mongoose, { Model } from 'mongoose';
+import { UserType } from './usertype';
 
 export interface IUser {
   _id: mongoose.Schema.Types.ObjectId;
   email: string;
   name: string;
   password: string;
-  userType: UserType | String;
+  userType: UserType;
 }
 
 export interface IUserMethods {
