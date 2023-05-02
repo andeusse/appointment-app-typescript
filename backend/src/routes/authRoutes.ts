@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import { IUser, UserModel } from '../types/User';
 import Config from '../config/config';
+import { UserType } from '../types/usertype';
 
 const User = mongoose.model<IUser, UserModel>('User');
 
@@ -12,7 +13,7 @@ const secretKey = Config.getInstance().params.secretKey;
 
 router.post('/signup', async (req, res) => {
   try {
-    const { email, password, name, userType = 'customer' } = req.body;
+    const { email, password, name, userType = UserType.Customer } = req.body;
 
     if (!email || !password) {
       return res

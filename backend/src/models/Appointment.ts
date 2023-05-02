@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Error } from 'mongoose';
 import {
   AppointmentModel,
   IAppointment,
@@ -39,5 +39,27 @@ const appointmentSchema = new mongoose.Schema<
     unique: false,
   },
 });
+
+appointmentSchema.pre(
+  'save',
+  async function (next: mongoose.CallbackWithoutResultAndOptionalError) {
+    const Appointment = mongoose.model<IAppointment, AppointmentModel>(
+      'Appointment'
+    );
+
+    const appointment = this;
+    const appointments = await Appointment.find({
+      doctorId: appointment.doctorId,
+    });
+    if (
+      appointments.filter(
+        (app) => app.date.toISOString() === appointment.date.toISOString()
+      ).length !== 0
+    ) {
+      return next(new Error('Doctor has already an appointment in that date'));
+    }
+    return next();
+  }
+);
 
 mongoose.model('Appointment', appointmentSchema);

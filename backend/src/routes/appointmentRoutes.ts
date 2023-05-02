@@ -27,7 +27,6 @@ router.post('/appointments', async (req: Request, res: Response) => {
   const user = (<RequestWithUserAppointment>req).user;
   const { doctorId, description, date } = (<RequestWithUserAppointment>req)
     .body;
-  const doctor = User.find({ userId: doctorId });
 
   if (!doctorId || !description || !date) {
     return res.send({
@@ -48,7 +47,7 @@ router.post('/appointments', async (req: Request, res: Response) => {
       return res.status(200).send(appointment);
     })
     .catch((error: Error) => {
-      return res.status(500).send({ message: error });
+      return res.status(500).send({ message: error.message });
     });
 });
 
