@@ -46,8 +46,8 @@ appointmentSchema.pre(
     const Appointment = mongoose.model<IAppointment, AppointmentModel>(
       'Appointment'
     );
-
     const appointment = this;
+
     const appointments = await Appointment.find({
       doctorId: appointment.doctorId,
     });

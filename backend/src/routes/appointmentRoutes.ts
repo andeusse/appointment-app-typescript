@@ -5,10 +5,9 @@ import {
   IAppointment,
   RequestWithUserAppointment,
 } from '../types/Appointment';
-import { IUser, RequestWithUser, UserModel } from '../types/User';
+import { RequestWithUser } from '../types/User';
 import requireAuth from '../middlewares/requireAuthHandler/RequireAuthHandlerMiddleware';
 
-const User = mongoose.model<IUser, UserModel>('User');
 const Appointment = mongoose.model<IAppointment, AppointmentModel>(
   'Appointment'
 );
@@ -49,6 +48,22 @@ router.post('/appointments', async (req: Request, res: Response) => {
     .catch((error: Error) => {
       return res.status(500).send({ message: error.message });
     });
+});
+
+router.put('/appointments/:id', async (req: Request, res: Response) => {
+  const appointmentId = req.params.id;
+  const update = (<RequestWithUserAppointment>req).body;
+
+  try {
+    if (!(await Appointment.findById(appointmentId))) {
+      return res.status(422).send({ message: 'Appointment not found' });
+    } else {
+      await Appointment.findByIdAndUpdate(appointmentId, update);
+      return res.send(update);
+    }
+  } catch (error) {
+    return res.send({ message: error });
+  }
 });
 
 export default router;

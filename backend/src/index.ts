@@ -12,7 +12,7 @@ import { handleError } from './middlewares/errorHandler/ErrorHandlerMiddleware';
 import authRoutes from './routes/authRoutes';
 import statusRoutes from './routes/statusRoutes';
 import applicationRoutes from './routes/appointmentRoutes';
-import doctorRoutes from './routes/doctorRoutes';
+import userRoutes from './routes/userRoutes';
 import Config from './config/config';
 
 const app: Express = express();
@@ -24,7 +24,7 @@ app.use(cors());
 app.use(authRoutes);
 app.use(statusRoutes);
 app.use(applicationRoutes);
-app.use(doctorRoutes);
+app.use(userRoutes);
 
 app.use(handleError);
 
