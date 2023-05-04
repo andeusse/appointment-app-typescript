@@ -18,8 +18,13 @@ router.use(requireAuth);
 
 router.get('/appointments', async (req: Request, res: Response) => {
   const user = (<RequestWithUser>req).user;
-  const appointments = await Appointment.find({ userId: user._id });
-  return res.status(200).send(appointments);
+  Appointment.find({ userId: user._id })
+    .then((appointments) => {
+      return res.status(200).send(appointments);
+    })
+    .catch((error: Error) => {
+      return res.status(500).send({ message: error.message });
+    });
 });
 
 router.post('/appointments', async (req: Request, res: Response) => {
@@ -54,16 +59,46 @@ router.put('/appointments/:id', async (req: Request, res: Response) => {
   const appointmentId = req.params.id;
   const update = (<RequestWithUserAppointment>req).body;
 
-  try {
-    if (!(await Appointment.findById(appointmentId))) {
-      return res.status(422).send({ message: 'Appointment not found' });
-    } else {
-      await Appointment.findByIdAndUpdate(appointmentId, update);
-      return res.send(update);
-    }
-  } catch (error) {
-    return res.send({ message: error });
+  const appointment = await Appointment.findById(appointmentId);
+  if (appointment) {
+    appointment.date = update.date;
+    appointment.description = update.description;
+    appointment.doctorId = update.doctorId;
+    appointment
+      .save()
+      .then(() => {
+        return res.status(200).send(appointment);
+      })
+      .catch((error: Error) => {
+        return res.status(500).send({ message: error.message });
+      });
+  } else {
+    return res.status(422).send({ message: 'Appointment not found' });
   }
+
+  if (!(await Appointment.findById(appointmentId))) {
+    return res.status(422).send({ message: 'Appointment not found' });
+  } else {
+    Appointment.findByIdAndUpdate(appointmentId, update)
+      .then((appointment) => {
+        return res.status(200).send(appointment);
+      })
+      .catch((error: Error) => {
+        return res.status(500).send({ message: error.message });
+      });
+  }
+});
+
+router.delete('/appointments/:id', async (req: Request, res: Response) => {
+  const appointmentId = req.params.id;
+
+  Appointment.findByIdAndDelete(appointmentId)
+    .then(() => {
+      return res.status(200).send({ message: 'Appointment deleted' });
+    })
+    .catch((error: Error) => {
+      return res.status(500).send({ message: error.message });
+    });
 });
 
 export default router;
