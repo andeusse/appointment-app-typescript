@@ -57,13 +57,21 @@ router.post('/appointments', async (req: Request, res: Response) => {
 
 router.put('/appointments/:id', async (req: Request, res: Response) => {
   const appointmentId = req.params.id;
-  const update = (<RequestWithUserAppointment>req).body;
+  const { date, description, doctorId } = (<RequestWithUserAppointment>req)
+    .body;
+
+  if (!date || !description || !doctorId) {
+    return res.status(422).send({
+      message:
+        'The user must send date, description and the doctor identification',
+    });
+  }
 
   const appointment = await Appointment.findById(appointmentId);
   if (appointment) {
-    appointment.date = update.date;
-    appointment.description = update.description;
-    appointment.doctorId = update.doctorId;
+    appointment.date = date;
+    appointment.description = description;
+    appointment.doctorId = doctorId;
     appointment
       .save()
       .then(() => {
@@ -74,18 +82,6 @@ router.put('/appointments/:id', async (req: Request, res: Response) => {
       });
   } else {
     return res.status(422).send({ message: 'Appointment not found' });
-  }
-
-  if (!(await Appointment.findById(appointmentId))) {
-    return res.status(422).send({ message: 'Appointment not found' });
-  } else {
-    Appointment.findByIdAndUpdate(appointmentId, update)
-      .then((appointment) => {
-        return res.status(200).send(appointment);
-      })
-      .catch((error: Error) => {
-        return res.status(500).send({ message: error.message });
-      });
   }
 });
 
