@@ -68,4 +68,4 @@ const checkDate = async (doctorId: ObjectId, date: string) => {
   return false;
 };
 
-mongoose.model('Appointment', appointmentSchema);
+export default mongoose.model('Appointment', appointmentSchema);

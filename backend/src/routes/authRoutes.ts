@@ -1,11 +1,8 @@
 import { Router } from 'express';
-import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import { IUser, UserModel } from '../types/User';
 import Config from '../config/config';
 import { UserType } from '../types/usertype';
-
-const User = mongoose.model<IUser, UserModel>('User');
+import User from '../models/User';
 
 const router = Router();
 

@@ -1,16 +1,9 @@
 import { Router, Request, Response } from 'express';
-import mongoose, { Error } from 'mongoose';
-import {
-  AppointmentModel,
-  IAppointment,
-  RequestWithUserAppointment,
-} from '../types/Appointment';
+import { Error } from 'mongoose';
+import { RequestWithUserAppointment } from '../types/Appointment';
 import { RequestWithUser } from '../types/User';
 import requireAuth from '../middlewares/requireAuthHandler/RequireAuthHandlerMiddleware';
-
-const Appointment = mongoose.model<IAppointment, AppointmentModel>(
-  'Appointment'
-);
+import Appointment from '../models/Appointment';
 
 const router = Router();
 

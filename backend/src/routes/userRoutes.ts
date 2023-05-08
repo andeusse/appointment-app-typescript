@@ -1,11 +1,8 @@
 import { Router, Request, Response } from 'express';
-import mongoose from 'mongoose';
-import { IUser, UserModel } from '../types/User';
 import requireAuth from '../middlewares/requireAuthHandler/RequireAuthHandlerMiddleware';
 import requireAdminAuth from '../middlewares/requireAdminAuthHandler/RequireAdminAuthHandlerMiddleware';
 import { UserType } from '../types/usertype';
-
-const User = mongoose.model<IUser, UserModel>('User');
+import User from '../models/User';
 
 const router = Router();
 

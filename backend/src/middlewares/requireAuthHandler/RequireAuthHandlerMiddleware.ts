@@ -1,16 +1,9 @@
-import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 
-import {
-  IUser,
-  RequestWithUser,
-  UserIDJwtPayload,
-  UserModel,
-} from '../../types/User';
+import { RequestWithUser, UserIDJwtPayload } from '../../types/User';
 import Config from '../../config/config';
-
-const User = mongoose.model<IUser, UserModel>('User');
+import User from '../../models/User';
 
 const secretKet = Config.getInstance().params.secretKey;
 
