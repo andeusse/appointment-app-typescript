@@ -8,7 +8,7 @@ import User from '../../models/User';
 
 const secretKet = Config.getInstance().params.secretKey;
 
-const requireAuth = (req: Request, res: Response, next: NextFunction) => {
+const requireAdminAuth = (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
@@ -20,8 +20,8 @@ const requireAuth = (req: Request, res: Response, next: NextFunction) => {
     if (err) {
       return res.status(401).send({ error: 'You must be log in as admin' });
     }
-    const { userId } = <UserIDJwtPayload>payload;
 
+    const { userId } = <UserIDJwtPayload>payload;
     const user = await User.findById(userId);
     if (user && user.userType === UserType.Admin) {
       (<RequestWithUser>req).user = user;
@@ -32,4 +32,4 @@ const requireAuth = (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
-export default requireAuth;
+export default requireAdminAuth;

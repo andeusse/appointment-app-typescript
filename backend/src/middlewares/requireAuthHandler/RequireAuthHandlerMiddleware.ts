@@ -19,8 +19,8 @@ const requireAuth = (req: Request, res: Response, next: NextFunction) => {
     if (err) {
       return res.status(401).send({ error: 'You must be log in' });
     }
-    const { userId } = <UserIDJwtPayload>payload;
 
+    const { userId } = <UserIDJwtPayload>payload;
     const user = await User.findById(userId);
     if (user) {
       (<RequestWithUser>req).user = user;

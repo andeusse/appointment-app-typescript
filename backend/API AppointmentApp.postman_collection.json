@@ -1,0 +1,444 @@
+{
+	"info": {
+		"_postman_id": "0f09677c-37fe-4f01-a547-5d030e9a1ea3",
+		"name": "API AppointmentApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11147150"
+	},
+	"item": [
+		{
+			"name": "Server Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/status/server",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"status",
+						"server"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MongoDB Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/status/mongo",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"status",
+						"mongo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"email\": \"email@email.com\",\r\n     \"password\": \"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/signin",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"email2@email.com\",\r\n    \"password\": \"password\",\r\n    \"name\": \"Andrés Giraldo\",\r\n    \"userType\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/signup",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Appointments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{customer_auth}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/appointments",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"appointments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Appointments",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{customer_auth}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-05-10 11:30:00\",\r\n    \"doctorId\": \"64542702c96c80d90f2ae516\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/appointments/",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"appointments",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Appointments/id",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{admin_auth}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-05-04T17:21:55.165Z\",\r\n    \"doctorId\": \"644c36fee670019ed083c671\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/appointments/6453cd9385cf4c0d6176504f",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"appointments",
+						"6453cd9385cf4c0d6176504f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Appointments/id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{admin_auth}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/appointments/6453dbf9b14c43fdccba6591",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"appointments",
+						"6453dbf9b14c43fdccba6591"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Doctors",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{customer_auth}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/doctors?day=2023-05-10",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"doctors"
+					],
+					"query": [
+						{
+							"key": "day",
+							"value": "2023-05-10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Doctors/id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{customer_auth}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/doctors/64542702c96c80d90f2ae516?day=2023-05-10",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"doctors",
+						"64542702c96c80d90f2ae516"
+					],
+					"query": [
+						{
+							"key": "day",
+							"value": "2023-05-10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{admin_auth}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/users",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{admin_auth}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"email3@email.com\",\r\n    \"password\": \"password\",\r\n    \"name\": \"Andrés Giraldo\",\r\n    \"userType\": \"doctor\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/users",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users/id",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{admin_auth}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"email6@email.com\",\r\n    \"password\": \"password\",\r\n    \"name\": \"Andrés Giraldo\",\r\n    \"userType\": \"doctor\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/users/645427b2c96c80d90f2ae52f",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users",
+						"645427b2c96c80d90f2ae52f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users/id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{admin_auth}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/users/645427b2c96c80d90f2ae52f",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users",
+						"645427b2c96c80d90f2ae52f"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.variables.set('date', new Date().toString());",
+					"pm.variables.set('timeStamp', new Date().getTime());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "date",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "timeStamp",
+			"value": "0",
+			"type": "string"
+		}
+	]
+}
