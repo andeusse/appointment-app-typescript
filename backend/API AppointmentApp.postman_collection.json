@@ -43,13 +43,39 @@
 			"response": []
 		},
 		{
-			"name": "Signin",
+			"name": "SigninAdmin",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n     \"email\": \"email@email.com\",\r\n     \"password\": \"password\"\r\n}",
+					"raw": "{\r\n     \"email\": \"email7@email.com\",\r\n     \"password\": \"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/signin",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SigninCustomer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"email\": \"email4@email.com\",\r\n     \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -75,7 +101,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"email2@email.com\",\r\n    \"password\": \"password\",\r\n    \"name\": \"Andrés Giraldo\",\r\n    \"userType\": \"admin\"\r\n}",
+					"raw": "{\r\n    \"email\": \"email@email.com\",\r\n    \"password\": \"password\",\r\n    \"name\": \"Andrés Giraldo\",\r\n    \"userType\": \"admin\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -108,14 +134,18 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{customer_auth}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{customer_auth}}",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"url": {
 					"raw": "{{URL}}/appointments",
 					"host": [
@@ -131,17 +161,21 @@
 		{
 			"name": "Appointments",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{customer_auth}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{customer_auth}}",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-05-10 11:30:00\",\r\n    \"doctorId\": \"64542702c96c80d90f2ae516\"\r\n}",
+					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-05-10 11:00:00\",\r\n    \"doctorId\": \"64542702c96c80d90f2ae516\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -164,17 +198,21 @@
 		{
 			"name": "Appointments/id",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{customer_auth}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{admin_auth}}",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-05-04T17:21:55.165Z\",\r\n    \"doctorId\": \"644c36fee670019ed083c671\"\r\n}",
+					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-05-10 11:00:00\",\r\n    \"doctorId\": \"000000000000000000000001\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -182,13 +220,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{URL}}/appointments/6453cd9385cf4c0d6176504f",
+					"raw": "{{URL}}/appointments/000000000000000000000101",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
 						"appointments",
-						"6453cd9385cf4c0d6176504f"
+						"000000000000000000000101"
 					]
 				}
 			},
@@ -215,13 +253,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{URL}}/appointments/6453dbf9b14c43fdccba6591",
+					"raw": "{{URL}}/appointments/000000000000000000000101",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
 						"appointments",
-						"6453dbf9b14c43fdccba6591"
+						"000000000000000000000101"
 					]
 				}
 			},
@@ -230,14 +268,18 @@
 		{
 			"name": "Doctors",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{customer_auth}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{customer_auth}}",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"url": {
 					"raw": "{{URL}}/doctors?day=2023-05-10",
 					"host": [
@@ -259,22 +301,26 @@
 		{
 			"name": "Doctors/id",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{customer_auth}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{customer_auth}}",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"url": {
-					"raw": "{{URL}}/doctors/64542702c96c80d90f2ae516?day=2023-05-10",
+					"raw": "{{URL}}/doctors/000000000000000000000001?day=2023-05-10",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
 						"doctors",
-						"64542702c96c80d90f2ae516"
+						"000000000000000000000001"
 					],
 					"query": [
 						{
@@ -289,14 +335,18 @@
 		{
 			"name": "Users",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_auth}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{admin_auth}}",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"url": {
 					"raw": "{{URL}}/users",
 					"host": [
@@ -312,17 +362,21 @@
 		{
 			"name": "Users",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_auth}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{admin_auth}}",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"email3@email.com\",\r\n    \"password\": \"password\",\r\n    \"name\": \"Andrés Giraldo\",\r\n    \"userType\": \"doctor\"\r\n}",
+					"raw": "{\r\n    \"email\": \"email10@email.com\",\r\n    \"password\": \"password\",\r\n    \"name\": \"Andrés Eusse\",\r\n    \"userType\": \"doctor\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -344,17 +398,21 @@
 		{
 			"name": "Users/id",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_auth}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{admin_auth}}",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"email6@email.com\",\r\n    \"password\": \"password\",\r\n    \"name\": \"Andrés Giraldo\",\r\n    \"userType\": \"doctor\"\r\n}",
+					"raw": "{\r\n    \"email\": \"email10@email.com\",\r\n    \"name\": \"Andrés Giraldo\",\r\n    \"userType\": \"doctor\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -362,13 +420,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{URL}}/users/645427b2c96c80d90f2ae52f",
+					"raw": "{{URL}}/users/000000000000000000000001",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
 						"users",
-						"645427b2c96c80d90f2ae52f"
+						"000000000000000000000001"
 					]
 				}
 			},
@@ -395,13 +453,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{URL}}/users/645427b2c96c80d90f2ae52f",
+					"raw": "{{URL}}/users/000000000000000000000001",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
 						"users",
-						"645427b2c96c80d90f2ae52f"
+						"000000000000000000000001"
 					]
 				}
 			},

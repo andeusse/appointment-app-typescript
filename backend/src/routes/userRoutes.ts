@@ -39,7 +39,7 @@ router.put('/users/:id', async (req, res) => {
 
   const user = await User.findById(userId);
   if (user) {
-    let isSamePassword: boolean | Error = true;
+    let isSamePassword: boolean | Error = false;
     if (password) {
       try {
         isSamePassword = await user.comparePassword(password);
@@ -52,7 +52,7 @@ router.put('/users/:id', async (req, res) => {
     if (isSamePassword) {
       return res.status(422).send({ message: `Password is the same` });
     }
-    user.password = password;
+    user.password = password ? password : user.password;
     user.email = email ? email : user.email;
     user.name = name ? name : user.name;
     user.userType = userType ? userType : user.userType;
