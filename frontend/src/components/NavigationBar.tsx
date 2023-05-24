@@ -20,16 +20,17 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import themeState from '../atoms/themeAtom';
 import { themeType } from '../types/themeType';
+import IUser from '../types/IUser';
 
 type Props = {
   pages: string[];
-  isLogged: boolean;
+  user: IUser | undefined;
 };
 
 const userSettings = ['Profile', 'Appointments', 'Logout'];
 
-const Navigation = (props: Props) => {
-  const { pages, isLogged } = props;
+const NavigationBar = (props: Props) => {
+  const { pages, user } = props;
 
   const [theme, setTheme] = useRecoilState(themeState);
 
@@ -56,7 +57,10 @@ const Navigation = (props: Props) => {
   };
 
   const handleChangeTheme = () => {
-    setTheme(theme === themeType.Light ? themeType.Dark : themeType.Light);
+    const newTheme =
+      theme === themeType.Light ? themeType.Dark : themeType.Light;
+    localStorage.setItem('theme', newTheme);
+    setTheme(newTheme);
   };
 
   return (
@@ -99,6 +103,7 @@ const Navigation = (props: Props) => {
               ))}
             </Menu>
           </Box>
+
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
@@ -111,14 +116,14 @@ const Navigation = (props: Props) => {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, pr: '10px' }}>
             <IconButton onClick={handleChangeTheme}>
               {theme === themeType.Light && <LightModeIcon></LightModeIcon>}
               {theme === themeType.Dark && <DarkModeIcon></DarkModeIcon>}
             </IconButton>
           </Box>
 
-          {isLogged && (
+          {user !== undefined && (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -155,4 +160,4 @@ const Navigation = (props: Props) => {
   );
 };
 
-export default Navigation;
+export default NavigationBar;
