@@ -2,10 +2,15 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 import React, { useState } from 'react';
 
-type Props = {};
+type Props = {
+  error: string | undefined;
+};
 
 const PasswordField = (props: Props) => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const { error } = props;
+
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
@@ -19,6 +24,8 @@ const PasswordField = (props: Props) => {
       type={showPassword ? 'text' : 'password'}
       id="password"
       autoComplete="current-password"
+      error={!!error}
+      helperText={error}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">

@@ -1,30 +1,30 @@
-import React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Container,
+  CssBaseline,
+  Box,
+  Avatar,
+  Typography,
+  Grid,
+  TextField,
+  Button,
+} from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 
 import Copyright from '../components/Copyright';
 import PasswordField from '../components/PasswordField';
+import validateForm from '../utils/validateForm';
+import { FormFieldsType } from '../types/formFields';
 
 type Props = {};
 
 const Signup = (props: Props) => {
+  const [errors, setErrors] = useState<FormFieldsType>({});
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      firstName: data.get('firstName'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    setErrors(validateForm(event));
   };
 
   return (
@@ -44,6 +44,7 @@ const Signup = (props: Props) => {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
+
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -55,6 +56,8 @@ const Signup = (props: Props) => {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                error={!!errors.firstName}
+                helperText={errors.firstName}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -65,6 +68,8 @@ const Signup = (props: Props) => {
                 label="Last Name"
                 name="lastName"
                 autoComplete="family-name"
+                error={!!errors.lastName}
+                helperText={errors.lastName}
               />
             </Grid>
             <Grid item xs={12}>
@@ -75,10 +80,12 @@ const Signup = (props: Props) => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                error={!!errors.email}
+                helperText={errors.email}
               />
             </Grid>
             <Grid item xs={12}>
-              <PasswordField />
+              <PasswordField error={errors.password} />
             </Grid>
           </Grid>
           <Button
@@ -91,9 +98,7 @@ const Signup = (props: Props) => {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
-                {'Already have an account? Sign in'}
-              </Link>
+              <Link to="/signin">Already have an account? Sign in</Link>
             </Grid>
           </Grid>
         </Box>

@@ -1,30 +1,30 @@
-import React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Container,
+  CssBaseline,
+  Box,
+  Avatar,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+} from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 
 import Copyright from '../components/Copyright';
 import PasswordField from '../components/PasswordField';
+import validateForm from '../utils/validateForm';
+import { FormFieldsType } from '../types/formFields';
 
 type Props = {};
 
 const Signin = (props: Props) => {
+  const [errors, setErrors] = useState<FormFieldsType>({});
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    setErrors(validateForm(event));
   };
 
   return (
@@ -44,6 +44,7 @@ const Signin = (props: Props) => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
+
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"
@@ -54,12 +55,10 @@ const Signin = (props: Props) => {
             name="email"
             autoComplete="email"
             autoFocus
+            error={!!errors.email}
+            helperText={errors.email}
           />
-          <PasswordField />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
+          <PasswordField error={errors.password} />
           <Button
             type="submit"
             fullWidth
@@ -68,16 +67,9 @@ const Signin = (props: Props) => {
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
+          <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
+              <Link to="/signup">Don't have an account? Sign Up</Link>
             </Grid>
           </Grid>
         </Box>

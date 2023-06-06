@@ -1,33 +1,32 @@
-import NavigationBar from './components/NavigationBar';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import themeState from './atoms/themeAtom';
-import Router from './components/Router';
+import Router from './components/router/Router';
 import string2Theme from './utils/string2Theme';
-import IUser from './types/IUser';
-import { UserType } from './types/usertype';
+import IsLoading from './components/IsLoading';
+import userState from './atoms/userAtom';
+import isLoadingState from './atoms/isLoadingAtom';
+import { useEffect } from 'react';
 
 type Props = {};
 
-const userPages = ['Signin'];
-const authPages = ['Appointment'];
-const adminPages = ['Doctors', 'Users'];
-
 const App = (props: Props) => {
-  const user: IUser = {
-    email: 'email@email.com',
-    name: 'Andres Eusse',
-    userType: UserType.Admin,
-    password: undefined,
-  };
-
+  const isLoading = useRecoilValue(isLoadingState);
+  const [user, setUser] = useRecoilState(userState);
   const [theme, setTheme] = useRecoilState(themeState);
-  const storageTheme = localStorage.getItem('theme');
 
-  if (storageTheme !== null) {
-    setTheme(string2Theme(storageTheme));
-  }
+  useEffect(() => {
+    const storageUser = localStorage.getItem('user');
+    if (storageUser !== null) {
+      setUser(JSON.parse(storageUser));
+    }
+
+    const storageTheme = localStorage.getItem('theme');
+    if (storageTheme !== null) {
+      setTheme(string2Theme(storageTheme));
+    }
+  }, [setTheme, setUser]);
 
   const themeMode = createTheme({
     palette: {
@@ -38,8 +37,9 @@ const App = (props: Props) => {
   return (
     <ThemeProvider theme={themeMode}>
       <CssBaseline />
-      <NavigationBar pages={userPages} user={user}></NavigationBar>
+      {/* <NavigationBar user={user}></NavigationBar> */}
       <Router user={user}></Router>
+      <IsLoading isLoading={isLoading}></IsLoading>
     </ThemeProvider>
   );
 };

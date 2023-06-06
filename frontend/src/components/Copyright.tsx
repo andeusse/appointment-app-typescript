@@ -10,7 +10,8 @@ const Copyright = (props: Props) => {
       align="center"
       {...props}
     >
-      {'Copyright © '} {new Date().getFullYear()}
+      {'Copyright © Andres Eusse. All Rights Reserved'}{' '}
+      {new Date().getFullYear()}
       {'.'}
     </Typography>
   );
