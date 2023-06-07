@@ -54,11 +54,12 @@ userSchema.methods.comparePassword = function (candidatePassword: string) {
       candidatePassword,
       user.password,
       (err: Error | undefined, isMatch: boolean) => {
+        console.log(err, isMatch);
         if (err) {
           return reject(err);
         }
         if (!isMatch) {
-          return resolve(false);
+          return reject(false);
         }
         return resolve(true);
       }
