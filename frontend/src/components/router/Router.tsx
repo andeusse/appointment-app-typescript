@@ -8,7 +8,6 @@ import Signup from '../../views/Signup';
 import Error from '../../views/Error';
 import NewAppointment from '../../views/NewAppointment';
 import UserProfile from '../../views/UserProfile';
-import Logout from '../../views/Logout';
 import Doctors from '../../views/Doctors';
 import Users from '../../views/Users';
 
@@ -16,6 +15,7 @@ import UserRoute from './UserRoute';
 import NonUserRoute from './NonUserRoute';
 import AdminRoute from './AdminRoute';
 import NavigationBar from '../NavigationBar';
+import DoctorAppointments from '../../views/DoctorAppointments';
 
 type Props = {
   user: IUser | undefined;
@@ -26,7 +26,7 @@ const Router = (props: Props) => {
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <NavigationBar user={user}></NavigationBar>,
+      element: <NavigationBar></NavigationBar>,
       errorElement: <Error></Error>,
       children: [
         {
@@ -44,7 +44,6 @@ const Router = (props: Props) => {
               <NewAppointment />
             </UserRoute>
           ),
-          errorElement: <Error></Error>,
         },
         {
           path: '/profile',
@@ -53,7 +52,6 @@ const Router = (props: Props) => {
               <UserProfile />
             </UserRoute>
           ),
-          errorElement: <Error></Error>,
         },
         {
           path: '/appointments',
@@ -62,16 +60,15 @@ const Router = (props: Props) => {
               <Appointments />
             </UserRoute>
           ),
-          errorElement: <Error></Error>,
         },
+
         {
-          path: '/logout',
+          path: '/doctorappointments',
           element: (
             <UserRoute user={user}>
-              <Logout />
+              <DoctorAppointments />
             </UserRoute>
           ),
-          errorElement: <Error></Error>,
         },
 
         {
@@ -81,7 +78,6 @@ const Router = (props: Props) => {
               <Doctors />
             </AdminRoute>
           ),
-          errorElement: <Error></Error>,
         },
         {
           path: '/users',
@@ -90,7 +86,6 @@ const Router = (props: Props) => {
               <Users />
             </AdminRoute>
           ),
-          errorElement: <Error></Error>,
         },
 
         {
@@ -100,7 +95,6 @@ const Router = (props: Props) => {
               <Signin />
             </NonUserRoute>
           ),
-          errorElement: <Error></Error>,
         },
         {
           path: '/signup',
@@ -109,7 +103,6 @@ const Router = (props: Props) => {
               <Signup />
             </NonUserRoute>
           ),
-          errorElement: <Error></Error>,
         },
       ],
     },

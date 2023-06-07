@@ -9,22 +9,54 @@ import {
   Grid,
   TextField,
   Button,
+  Alert,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useSetRecoilState } from 'recoil';
 
 import Copyright from '../components/Copyright';
 import PasswordField from '../components/PasswordField';
 import validateForm from '../utils/validateForm';
 import { FormFieldsType } from '../types/formFields';
+import { signup } from '../api/auth';
+import userState from '../atoms/userAtom';
+import IUser from '../types/IUser';
 
 type Props = {};
 
 const Signup = (props: Props) => {
+  const setUser = useSetRecoilState(userState);
+
   const [errors, setErrors] = useState<FormFieldsType>({});
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setErrors(validateForm(event));
+    const { email, password, firstName, lastName, errors } =
+      validateForm(event);
+    setErrors(errors);
+
+    if (
+      !errors.email &&
+      !errors.password &&
+      !errors.firstName &&
+      !errors.lastName &&
+      email !== undefined &&
+      password !== undefined &&
+      firstName !== undefined &&
+      lastName !== undefined
+    ) {
+      signup(email, password, `${firstName} ${lastName}`)
+        .then((res) => {
+          setApiError(null);
+          const user = res.data as IUser;
+          localStorage.setItem('user', JSON.stringify(user));
+          setUser(user);
+        })
+        .catch((error) => {
+          setApiError(error.response.data.message);
+        });
+    }
   };
 
   return (
@@ -44,6 +76,8 @@ const Signup = (props: Props) => {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
+
+        {!!apiError && <Alert severity="error">{apiError}</Alert>}
 
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>

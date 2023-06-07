@@ -8,46 +8,40 @@ import {
   Box,
   IconButton,
   Menu,
-  MenuItem,
-  Typography,
   Button,
   Tooltip,
   Avatar,
-  Link as LinkBase,
 } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import HomeIcon from '@mui/icons-material/Home';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+
 import themeState from '../atoms/themeAtom';
 import { themeType } from '../types/themeType';
-import IUser from '../types/IUser';
 import { UserType } from '../types/usertype';
 import { Link, Outlet } from 'react-router-dom';
+import MenuItemLink from './MenuItemLink';
+import userState from '../atoms/userAtom';
+import getFullNameInitials from '../utils/getFullNameInitials';
 
-type Props = {
-  user: IUser | undefined;
+type Props = {};
+
+type pages = {
+  text: string;
+  to: string;
+  icon: JSX.Element;
+  action: () => void;
 };
 
-const nonUserPages = ['Signin', 'Signup'];
-const userPages = ['Home'];
-const adminPages = ['Home', 'Doctors', 'Users'];
-
-const userSettings = ['Profile', 'Appointments', 'Logout'];
-
 const NavigationBar = (props: Props) => {
-  const { user } = props;
-  let pages: string[] = [];
-
-  if (user === undefined) {
-    pages = nonUserPages;
-  }
-  if (user !== undefined && user.userType === UserType.Customer) {
-    pages = userPages;
-  }
-  if (user !== undefined && user.userType === UserType.Admin) {
-    pages = adminPages;
-  }
+  const [user, setUser] = useRecoilState(userState);
 
   const [theme, setTheme] = useRecoilState(themeState);
 
@@ -72,6 +66,59 @@ const NavigationBar = (props: Props) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleLogout = () => {
+    setAnchorElUser(null);
+    localStorage.removeItem('user');
+    setUser(undefined);
+  };
+
+  const nonUserPages: pages[] = [
+    {
+      text: 'Signin',
+      to: 'signin',
+      icon: <AccountCircleIcon />,
+      action: handleCloseNavMenu,
+    },
+  ];
+  const userPages: pages[] = [];
+  const doctorPages: pages[] = [
+    {
+      text: 'Appointments',
+      to: 'doctorAppointments',
+      icon: <FormatListNumberedIcon />,
+      action: handleCloseNavMenu,
+    },
+  ];
+  const adminPages: pages[] = [
+    {
+      text: 'Doctors',
+      to: 'doctors',
+      icon: <LocalHospitalIcon />,
+      action: handleCloseNavMenu,
+    },
+    {
+      text: 'Users',
+      to: 'users',
+      icon: <PeopleAltIcon />,
+      action: handleCloseNavMenu,
+    },
+  ];
+
+  let pages: pages[] = [];
+
+  if (user === undefined) {
+    pages = nonUserPages;
+  }
+  if (user !== undefined && user.userType === UserType.Customer) {
+    pages = userPages;
+  }
+  if (user !== undefined && user.userType === UserType.Doctor) {
+    pages = doctorPages;
+  }
+  if (user !== undefined && user.userType === UserType.Admin) {
+    pages = adminPages;
+  }
 
   const handleChangeTheme = () => {
     const newTheme =
@@ -114,34 +161,64 @@ const NavigationBar = (props: Props) => {
                   display: { xs: 'block', md: 'none' },
                 }}
               >
+                {user !== undefined && (
+                  <MenuItemLink
+                    to=""
+                    text="Home"
+                    handleClick={handleCloseNavMenu}
+                    icon={<HomeIcon />}
+                  ></MenuItemLink>
+                )}
                 {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
-                  </MenuItem>
+                  <MenuItemLink
+                    key={page.text}
+                    to={page.to}
+                    text={page.text}
+                    handleClick={page.action}
+                    icon={page.icon}
+                  ></MenuItemLink>
                 ))}
               </Menu>
             </Box>
 
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-              {pages.map((page) => (
+              {user !== undefined && (
                 <Link
-                  key={page}
-                  to={`/${page}`}
+                  key="Home"
+                  to={`/`}
                   style={{
                     textDecoration: 'none',
                   }}
                 >
                   <Button
+                    startIcon={<HomeIcon />}
                     onClick={handleCloseNavMenu}
-                    sx={{ my: 1, color: 'white', display: 'block' }}
+                    sx={{ my: 1, color: 'white', ml: '10px' }}
                   >
-                    {page}
+                    Home
+                  </Button>
+                </Link>
+              )}
+              {pages.map((page) => (
+                <Link
+                  key={page.text}
+                  to={`/${page.to}`}
+                  style={{
+                    textDecoration: 'none',
+                  }}
+                >
+                  <Button
+                    startIcon={page.icon}
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 1, color: 'white', ml: '10px' }}
+                  >
+                    {page.text}
                   </Button>
                 </Link>
               ))}
             </Box>
 
-            <Box sx={{ flexGrow: 0, pr: '10px' }}>
+            <Box sx={{ flexGrow: 0, mr: '10px' }}>
               <IconButton onClick={handleChangeTheme}>
                 {theme === themeType.Light && <LightModeIcon></LightModeIcon>}
                 {theme === themeType.Dark && <DarkModeIcon></DarkModeIcon>}
@@ -152,7 +229,11 @@ const NavigationBar = (props: Props) => {
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar>AE</Avatar>
+                    <Avatar>
+                      {getFullNameInitials(
+                        user.name !== undefined ? user.name : 'NN'
+                      )}
+                    </Avatar>
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -171,19 +252,24 @@ const NavigationBar = (props: Props) => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  {userSettings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <LinkBase
-                        component={Link}
-                        to={`/${setting}`}
-                        style={{
-                          textDecoration: 'none',
-                        }}
-                      >
-                        <Typography textAlign="center">{setting}</Typography>
-                      </LinkBase>
-                    </MenuItem>
-                  ))}
+                  <MenuItemLink
+                    to="profile"
+                    text="Profile"
+                    handleClick={handleCloseUserMenu}
+                    icon={<AccountCircleIcon />}
+                  ></MenuItemLink>
+                  <MenuItemLink
+                    to="appointments"
+                    text="Appointments"
+                    handleClick={handleCloseUserMenu}
+                    icon={<FormatListNumberedIcon />}
+                  ></MenuItemLink>
+                  <MenuItemLink
+                    to=""
+                    text="Logout"
+                    handleClick={handleLogout}
+                    icon={<LogoutIcon />}
+                  ></MenuItemLink>
                 </Menu>
               </Box>
             )}

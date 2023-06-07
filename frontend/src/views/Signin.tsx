@@ -9,22 +9,49 @@ import {
   TextField,
   Button,
   Grid,
+  Alert,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useSetRecoilState } from 'recoil';
 
 import Copyright from '../components/Copyright';
 import PasswordField from '../components/PasswordField';
 import validateForm from '../utils/validateForm';
 import { FormFieldsType } from '../types/formFields';
+import { signin } from '../api/auth';
+import userState from '../atoms/userAtom';
+import IUser from '../types/IUser';
 
 type Props = {};
 
 const Signin = (props: Props) => {
+  const setUser = useSetRecoilState(userState);
+
   const [errors, setErrors] = useState<FormFieldsType>({});
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setErrors(validateForm(event));
+    const { email, password, errors } = validateForm(event);
+    setErrors(errors);
+
+    if (
+      !errors.email &&
+      !errors.password &&
+      email !== undefined &&
+      password !== undefined
+    ) {
+      signin(email, password)
+        .then((res) => {
+          setApiError(null);
+          const user = res.data as IUser;
+          localStorage.setItem('user', JSON.stringify(user));
+          setUser(user);
+        })
+        .catch((error) => {
+          setApiError(error.response.data.message);
+        });
+    }
   };
 
   return (
@@ -44,6 +71,8 @@ const Signin = (props: Props) => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
+
+        {!!apiError && <Alert severity="error">{apiError}</Alert>}
 
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField

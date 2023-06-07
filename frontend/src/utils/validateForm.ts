@@ -37,7 +37,13 @@ const validateForm = (event: React.FormEvent<HTMLFormElement>) => {
       errors.lastName = 'You must enter your last name';
     }
   }
-  return errors;
+  return {
+    email: email?.toString(),
+    password: password?.toString(),
+    firstName: firstName?.toString(),
+    lastName: lastName?.toString(),
+    errors,
+  };
 };
 
 export default validateForm;
