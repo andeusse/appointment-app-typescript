@@ -4,28 +4,32 @@ import React, { useState } from 'react';
 
 type Props = {
   error: string | undefined;
+  id?: string;
+  handlePropertyChange?: (e: any) => void;
+  value?: string;
 };
 
 const PasswordField = (props: Props) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const { error } = props;
+  const { error, id = 'password', handlePropertyChange, value } = props;
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
   return (
     <TextField
-      margin="normal"
       required
       fullWidth
-      name="password"
+      name={id}
       label="Password"
       type={showPassword ? 'text' : 'password'}
-      id="password"
+      id={id}
       autoComplete="current-password"
       error={!!error}
       helperText={error}
+      value={value}
+      onChange={handlePropertyChange}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">

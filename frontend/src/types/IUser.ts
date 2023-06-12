@@ -5,5 +5,6 @@ export default interface User {
   name: string | undefined;
   userType: UserType | undefined;
   password?: string | undefined;
+  confirmPassword?: string | undefined;
   token?: string;
 }

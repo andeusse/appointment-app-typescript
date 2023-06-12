@@ -2,17 +2,61 @@ import { Router, Request, Response } from 'express';
 import requireAdminAuth from '../middlewares/requireAdminAuthHandler/RequireAdminAuthHandlerMiddleware';
 import { UserType } from '../types/usertype';
 import User from '../models/User';
+import { RequestWithUser } from '../types/User';
+import requireAuth from '../middlewares/requireAuthHandler/RequireAuthHandlerMiddleware';
 
 const router = Router();
 
-router.use(requireAdminAuth);
+router.use(requireAuth).put('/user', async (req, res) => {
+  const IUser = (<RequestWithUser>req).user;
+  const user = await User.findById(IUser._id);
+  const { email, password, name, userType } = req.body;
 
-router.get('/users', async (req: Request, res: Response) => {
-  const users = await User.find().select('-password');
-  return res.status(200).send(users);
+  if (user) {
+    let isSamePassword: boolean | Error = false;
+    if (password) {
+      try {
+        isSamePassword = await user.comparePassword(password);
+      } catch (error) {
+        return res.status(422).send({
+          message: `Error changing the password, try again\n${error}`,
+        });
+      }
+    }
+    if (isSamePassword) {
+      return res.status(422).send({ message: `Password is the same` });
+    }
+    user.password = password ? password : user.password;
+    user.email = email ? email : user.email;
+    user.name = name ? name : user.name;
+    user.userType = userType ? userType : user.userType;
+    user
+      .save()
+      .then(() => {
+        return res
+          .status(200)
+          .send({
+            email: user.email,
+            name: user.name,
+            userType: user.userType,
+          });
+      })
+      .catch((error: Error) => {
+        return res.status(500).send({ message: error.message });
+      });
+  } else {
+    return res.status(422).send({ message: 'User not found' });
+  }
 });
 
-router.post('/users', async (req, res) => {
+router
+  .use(requireAdminAuth)
+  .get('/users', async (req: Request, res: Response) => {
+    const users = await User.find().select('-password');
+    return res.status(200).send(users);
+  });
+
+router.use(requireAdminAuth).post('/users', async (req, res) => {
   const { email, password, name, userType = UserType.Customer } = req.body;
 
   if (!email || !password || !name) {
@@ -33,7 +77,7 @@ router.post('/users', async (req, res) => {
     });
 });
 
-router.put('/users/:id', async (req, res) => {
+router.use(requireAdminAuth).put('/users/:id', async (req, res) => {
   const userId = req.params.id;
   const { email, password, name, userType } = req.body;
 
@@ -69,7 +113,7 @@ router.put('/users/:id', async (req, res) => {
   }
 });
 
-router.delete('/users/:id', async (req, res) => {
+router.use(requireAdminAuth).delete('/users/:id', async (req, res) => {
   const userId = req.params.id;
   User.findByIdAndDelete(userId)
     .then(() => {

@@ -21,11 +21,13 @@ import { FormFieldsType } from '../types/formFields';
 import { signin } from '../api/auth';
 import userState from '../atoms/userAtom';
 import IUser from '../types/IUser';
+import isLoadingState from '../atoms/isLoadingAtom';
 
 type Props = {};
 
 const Signin = (props: Props) => {
   const setUser = useSetRecoilState(userState);
+  const setIsLoading = useSetRecoilState(isLoadingState);
 
   const [errors, setErrors] = useState<FormFieldsType>({});
   const [apiError, setApiError] = useState<string | null>(null);
@@ -41,6 +43,7 @@ const Signin = (props: Props) => {
       email !== undefined &&
       password !== undefined
     ) {
+      setIsLoading(true);
       signin(email, password)
         .then((res) => {
           setApiError(null);
@@ -50,6 +53,9 @@ const Signin = (props: Props) => {
         })
         .catch((error) => {
           setApiError(error.response.data.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
   };

@@ -21,11 +21,13 @@ import { FormFieldsType } from '../types/formFields';
 import { signup } from '../api/auth';
 import userState from '../atoms/userAtom';
 import IUser from '../types/IUser';
+import isLoadingState from '../atoms/isLoadingAtom';
 
 type Props = {};
 
 const Signup = (props: Props) => {
   const setUser = useSetRecoilState(userState);
+  const setIsLoading = useSetRecoilState(isLoadingState);
 
   const [errors, setErrors] = useState<FormFieldsType>({});
   const [apiError, setApiError] = useState<string | null>(null);
@@ -46,6 +48,7 @@ const Signup = (props: Props) => {
       firstName !== undefined &&
       lastName !== undefined
     ) {
+      setIsLoading(true);
       signup(email, password, `${firstName} ${lastName}`)
         .then((res) => {
           setApiError(null);
@@ -55,6 +58,9 @@ const Signup = (props: Props) => {
         })
         .catch((error) => {
           setApiError(error.response.data.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
   };

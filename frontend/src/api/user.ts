@@ -15,7 +15,15 @@ export const addUser = (user: IUser, token: string) => {
   );
 };
 
-export const changeUser = (userId: string, user: IUser, token: string) => {
+export const changeUser = (user: IUser, token: string) => {
+  return api.put(
+    `/user/`,
+    { ...user },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+};
+
+export const changeUserById = (userId: string, user: IUser, token: string) => {
   return api.put(
     `/users/${userId}}`,
     { ...user },

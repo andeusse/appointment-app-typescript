@@ -39,17 +39,23 @@ router.post('/signin', (req, res) => {
       if (user) {
         user
           .comparePassword(password)
-          .then(() => {
-            const token = jwt.sign(
-              { userId: user._id, email: user.email, name: user.name },
-              secretKey
-            );
-            res.send({
-              token,
-              email: user.email,
-              name: user.name,
-              userType: user.userType,
-            });
+          .then((isSamePassword) => {
+            if (isSamePassword) {
+              const token = jwt.sign(
+                { userId: user._id, email: user.email, name: user.name },
+                secretKey
+              );
+              res.send({
+                token,
+                email: user.email,
+                name: user.name,
+                userType: user.userType,
+              });
+            } else {
+              return res
+                .status(422)
+                .send({ message: 'Invalid email or password' });
+            }
           })
           .catch(() => {
             return res
