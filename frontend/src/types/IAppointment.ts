@@ -1,5 +1,7 @@
+import { Moment } from 'moment';
+
 export default interface IAppointment {
-  desciption: string;
-  date: Date;
+  description: string;
+  date: Moment;
   doctorId: string;
 }

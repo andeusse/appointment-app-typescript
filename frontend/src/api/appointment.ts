@@ -2,11 +2,13 @@ import IAppointment from '../types/IAppointment';
 import api from './api';
 
 export const getAppointments = (token: string) => {
-  api.get('/appointments', { headers: { Authorization: `Bearer ${token}` } });
+  return api.get('/appointments', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 };
 
 export const addAppointment = (appoinment: IAppointment, token: string) => {
-  api.post(
+  return api.post(
     '/appointments',
     { ...appoinment },
     { headers: { Authorization: `Bearer ${token}` } }
@@ -18,7 +20,7 @@ export const changeAppointment = (
   appoinment: IAppointment,
   token: string
 ) => {
-  api.put(
+  return api.put(
     `/appointments/${appointmentsId}`,
     { ...appoinment },
     { headers: { Authorization: `Bearer ${token}` } }
@@ -26,7 +28,7 @@ export const changeAppointment = (
 };
 
 export const deleteAppointment = (appointmentsId: string, token: string) => {
-  api.delete(`/appointments/${appointmentsId}`, {
+  return api.delete(`/appointments/${appointmentsId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
