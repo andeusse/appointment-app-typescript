@@ -54,6 +54,7 @@ const NewAppointment = (props: Props) => {
     if (user && user.token) {
       getDoctors(user.token, moment().format('YYYY-MM-DD'))
         .then((res) => {
+          setApiError(null);
           setAppointments(res.data as IAppointments[]);
         })
         .catch((error) => {
@@ -117,6 +118,8 @@ const NewAppointment = (props: Props) => {
           .finally(() => {
             setIsLoading(false);
             setAppointmentDate(newDate);
+            setselectedDoctor(undefined);
+            setselectedDate(undefined);
           });
       }
     }
@@ -127,9 +130,10 @@ const NewAppointment = (props: Props) => {
       (a) => a.doctor._id === event.target.value
     );
     setselectedDoctor(doctor);
+    setselectedDate(undefined);
   };
 
-  const handleHourChange = (event: SelectChangeEvent<any>) => {
+  const handleDateChange = (event: SelectChangeEvent<any>) => {
     setselectedDate(event.target.value);
   };
 
@@ -210,7 +214,7 @@ const NewAppointment = (props: Props) => {
                     <Select
                       value={selectedDate || ''}
                       label="Age"
-                      onChange={handleHourChange}
+                      onChange={handleDateChange}
                     >
                       {selectedDoctor.availableAppointmens.map(
                         (appointment) => (

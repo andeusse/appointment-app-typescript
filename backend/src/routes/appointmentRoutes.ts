@@ -4,6 +4,7 @@ import { RequestWithUserAppointment } from '../types/Appointment';
 import { RequestWithUser } from '../types/User';
 import requireAuth from '../middlewares/requireAuthHandler/RequireAuthHandlerMiddleware';
 import Appointment from '../models/Appointment';
+import User from '../models/User';
 
 const router = Router();
 
@@ -12,8 +13,23 @@ router.use(requireAuth);
 router.get('/appointments', async (req: Request, res: Response) => {
   const user = (<RequestWithUser>req).user;
   Appointment.find({ userId: user._id })
-    .then((appointments) => {
-      return res.status(200).send(appointments);
+    .then(async (appointments) => {
+      let appointmentsWithDoctor = [];
+      for (let i = 0; i < appointments.length; i++) {
+        const doctor = await User.findById(appointments[i].doctorId).select([
+          'name',
+        ]);
+        appointmentsWithDoctor.push({
+          _id: appointments[i]._id,
+          date: appointments[i].date,
+          attended: appointments[i].attended,
+          doctorName: doctor?.name,
+        });
+      }
+      appointmentsWithDoctor.sort(
+        (a, b) => b.date.getTime() - a.date.getTime()
+      );
+      return res.status(200).send(appointmentsWithDoctor);
     })
     .catch((error: Error) => {
       return res.status(500).send({ message: error.message });
