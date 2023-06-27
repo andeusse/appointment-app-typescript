@@ -45,19 +45,34 @@ appointmentSchema.pre(
   async function (next: mongoose.CallbackWithoutResultAndOptionalError) {
     const appointment = this;
 
-    if (await checkDate(appointment.doctorId, appointment.date.toISOString())) {
+    if (
+      await checkDate(
+        'doctorId',
+        appointment.doctorId,
+        appointment.date.toISOString()
+      )
+    ) {
       return next(new Error('Doctor has already an appointment in that date'));
+    }
+    if (
+      await checkDate(
+        'userId',
+        appointment.userId,
+        appointment.date.toISOString()
+      )
+    ) {
+      return next(new Error('User has already an appointment in that date'));
     }
     return next();
   }
 );
 
-const checkDate = async (doctorId: ObjectId, date: string) => {
+const checkDate = async (userToCheck: string, id: ObjectId, date: string) => {
   const Appointment = mongoose.model<IAppointment, AppointmentModel>(
     'Appointment'
   );
   const appointments = await Appointment.find({
-    doctorId: doctorId,
+    [userToCheck]: id,
   });
 
   if (
