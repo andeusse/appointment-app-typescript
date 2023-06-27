@@ -26,6 +26,7 @@ import { getDoctors } from '../api/doctors';
 import userState from '../atoms/userAtom';
 import IAppointments from '../types/IAppointments';
 import { addAppointment } from '../api/appointment';
+import disableDates from '../utils/disableDates';
 
 type Props = {};
 
@@ -245,13 +246,3 @@ const NewAppointment = (props: Props) => {
 };
 
 export default NewAppointment;
-
-const disableDates = (date: moment.Moment) => {
-  const day = date.day();
-  const nextMonth = moment().add(2, 'month');
-
-  if (day === 0 || day === 6 || date > nextMonth) {
-    return true;
-  }
-  return false;
-};

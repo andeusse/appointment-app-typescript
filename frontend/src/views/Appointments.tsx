@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Container,
@@ -14,16 +14,22 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  IconButton,
 } from '@mui/material';
+import moment from 'moment';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
-import { getAppointments } from '../api/appointment';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+
+import { deleteAppointment, getAppointments } from '../api/appointment';
 import userState from '../atoms/userAtom';
 import isLoadingState from '../atoms/isLoadingAtom';
 import { IUserAppointment } from '../types/IAppointment';
-import moment from 'moment';
 
 type Props = {};
 
@@ -33,6 +39,28 @@ const Appointments = (props: Props) => {
   const [appointments, setAppointments] = useState<IUserAppointment[]>([]);
 
   const [apiError, setApiError] = useState<string | null>(null);
+
+  const handleEditAppointment = (id: string) => {
+    if (user && user.token) {
+    }
+  };
+
+  const handleDeleteAppointment = (id: string) => {
+    if (user && user.token) {
+      setIsLoading(true);
+      deleteAppointment(id, user.token)
+        .then((res) => {
+          setApiError(null);
+          setAppointments(appointments.filter((a) => a._id !== id));
+        })
+        .catch((error) => {
+          setApiError(error.response.data.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  };
 
   useEffect(() => {
     if (user && user.token) {
@@ -89,7 +117,19 @@ const Appointments = (props: Props) => {
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {appointment._id}
+                      <IconButton
+                        aria-label="edit"
+                        disabled={moment(appointment.date) < moment()}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        aria-label="delete"
+                        disabled={moment(appointment.date) < moment()}
+                        onClick={() => handleDeleteAppointment(appointment._id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
                     </TableCell>
                     <TableCell align="right">
                       {moment(appointment.date).format('YYYY-MM-DD hh:mm A')}
@@ -98,7 +138,11 @@ const Appointments = (props: Props) => {
                       {appointment.doctorName}
                     </TableCell>
                     <TableCell align="right">
-                      {appointment.attended ? 'YES' : 'NO'}
+                      {appointment.attended ? (
+                        <CheckIcon style={{ color: 'green' }}></CheckIcon>
+                      ) : (
+                        <CloseIcon style={{ color: 'red' }}></CloseIcon>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
