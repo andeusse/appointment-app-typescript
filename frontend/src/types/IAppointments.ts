@@ -1,4 +1,4 @@
-export default interface IAppointments {
+export default interface IAvailableAppointments {
   doctor: IDoctor;
   availableAppointmens: string[];
 }

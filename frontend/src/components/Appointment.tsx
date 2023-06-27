@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IUserAppointment } from '../types/IAppointment';
+import IAppointment, { IUserAppointment } from '../types/IAppointment';
 import {
   SelectChangeEvent,
   Box,
@@ -17,29 +17,29 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { getDoctors } from '../api/doctors';
 import isLoadingState from '../atoms/isLoadingAtom';
 import userState from '../atoms/userAtom';
-import IAppointments from '../types/IAppointments';
+import IAvailableAppointments from '../types/IAppointments';
 import disableDates from '../utils/disableDates';
 
 type Props = {
   appointment?: IUserAppointment;
   buttonText: string;
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => {};
+  formActionSubmit: (appointment: IAppointment, _id?: string) => void;
   setApiError: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 const Appointment = (props: Props) => {
-  const { appointment, buttonText, handleSubmit, setApiError } = props;
+  const { appointment, buttonText, formActionSubmit, setApiError } = props;
 
-  const [appointmentDate, setAppointmentDate] = React.useState<Moment | null>(
-    moment()
+  const [appointments, setAppointments] = useState<IAvailableAppointments[]>(
+    []
   );
 
-  const [appointments, setAppointments] = useState<IAppointments[]>([]);
-
+  const [appointmentDate, setAppointmentDate] = React.useState<Moment>(
+    moment()
+  );
   const [selectedDoctor, setselectedDoctor] = useState<
-    IAppointments | undefined
-  >();
-
+    IAvailableAppointments | undefined
+  >(undefined);
   const [selectedDate, setselectedDate] = useState<Moment | undefined>(
     undefined
   );
@@ -51,10 +51,13 @@ const Appointment = (props: Props) => {
   useEffect(() => {
     setIsLoading(true);
     if (user && user.token) {
-      getDoctors(user.token, moment().format('YYYY-MM-DD'))
+      const queryDate = (
+        appointment ? moment(appointment.date) : moment()
+      ).format('YYYY-MM-DD');
+      getDoctors(user.token, queryDate)
         .then((res) => {
           setApiError(null);
-          setAppointments(res.data as IAppointments[]);
+          setAppointments(res.data as IAvailableAppointments[]);
         })
         .catch((error) => {
           setApiError(error.response.data.message);
@@ -63,7 +66,42 @@ const Appointment = (props: Props) => {
           setIsLoading(false);
         });
     }
-  }, [setApiError, setIsLoading, user]);
+  }, [user, appointment, setApiError, setIsLoading]);
+
+  // useEffect(() => {
+  //   if (appointment) {
+  //     setAppointmentDate(moment(appointment.date));
+  //     setselectedDoctor(
+  //       appointments.find((a) => a.doctor.name === appointment.doctorName)
+  //     );
+  //     setselectedDate(appointment.date);
+  //   }
+  // }, [appointment, appointments]);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (selectedDoctor && selectedDate) {
+      setselectedDoctor(undefined);
+      setselectedDate(undefined);
+      if (appointment === undefined) {
+        formActionSubmit({
+          doctorId: selectedDoctor.doctor._id,
+          date: selectedDate,
+          description: `Appointment done by the application on ${moment()}`,
+        });
+      }
+      // else {
+      //   formActionSubmit(
+      //     {
+      //       doctorId: selectedDoctor.doctor._id,
+      //       date: selectedDate,
+      //       description: `Appointment done by the application on ${moment()}`,
+      //     },
+      //     appointment._id
+      //   );
+      // }
+    }
+  };
 
   const handleAppointmentDateChange = (newDate: moment.Moment | null) => {
     setIsLoading(true);
@@ -71,7 +109,7 @@ const Appointment = (props: Props) => {
       if (newDate !== null) {
         getDoctors(user.token, newDate.format('YYYY-MM-DD'))
           .then((res) => {
-            setAppointments(res.data as IAppointments[]);
+            setAppointments(res.data as IAvailableAppointments[]);
           })
           .catch((error) => {
             setApiError(error.response.data.message);
@@ -157,6 +195,15 @@ const Appointment = (props: Props) => {
                     {moment(appointment).format('hh:mm A')}
                   </MenuItem>
                 ))}
+                {appointment !== undefined &&
+                  selectedDoctor.doctor.name === appointment.doctorName && (
+                    <MenuItem
+                      key={appointment.date.toString()}
+                      value={appointment.date.toString()}
+                    >
+                      {moment(appointment.date).format('hh:mm A')}
+                    </MenuItem>
+                  )}
               </Select>
             </FormControl>
           </Grid>

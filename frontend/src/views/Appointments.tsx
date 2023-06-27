@@ -15,6 +15,7 @@ import {
   TableHead,
   TableRow,
   IconButton,
+  Modal,
 } from '@mui/material';
 import moment from 'moment';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -26,22 +27,39 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-import { deleteAppointment, getAppointments } from '../api/appointment';
+import {
+  changeAppointment,
+  deleteAppointment,
+  getAppointments,
+} from '../api/appointment';
 import userState from '../atoms/userAtom';
 import isLoadingState from '../atoms/isLoadingAtom';
-import { IUserAppointment } from '../types/IAppointment';
+import IAppointment, { IUserAppointment } from '../types/IAppointment';
+import Appointment from '../components/Appointment';
 
 type Props = {};
 
 const Appointments = (props: Props) => {
+  const [open, setOpen] = useState(false);
+  const handleOpen = (appointment: IUserAppointment) => {
+    setAppointment(appointment);
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
+
   const user = useRecoilValue(userState);
   const setIsLoading = useSetRecoilState(isLoadingState);
+
   const [appointments, setAppointments] = useState<IUserAppointment[]>([]);
+  const [appointment, setAppointment] = useState<IUserAppointment | undefined>(
+    undefined
+  );
 
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const handleEditAppointment = (id: string) => {
-    if (user && user.token) {
+  const formActionSubmit = (appointment: IAppointment, _id?: string) => {
+    if (user && user.token && _id) {
+      changeAppointment(_id, appointment, user.token);
     }
   };
 
@@ -120,6 +138,7 @@ const Appointments = (props: Props) => {
                       <IconButton
                         aria-label="edit"
                         disabled={moment(appointment.date) < moment()}
+                        onClick={() => handleOpen(appointment)}
                       >
                         <EditIcon />
                       </IconButton>
@@ -150,9 +169,39 @@ const Appointments = (props: Props) => {
             </Table>
           </TableContainer>
         </Box>
+
+        {appointment !== undefined && (
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={modalStyle}>
+              <Appointment
+                buttonText="Change appointment"
+                formActionSubmit={formActionSubmit}
+                setApiError={setApiError}
+                appointment={appointment}
+              ></Appointment>
+            </Box>
+          </Modal>
+        )}
       </Container>
     </LocalizationProvider>
   );
 };
 
 export default Appointments;
+
+const modalStyle = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};

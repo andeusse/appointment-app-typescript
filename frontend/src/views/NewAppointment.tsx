@@ -1,100 +1,46 @@
+import { useState } from 'react';
 import {
   Container,
   CssBaseline,
   Box,
   Avatar,
   Typography,
-  Button,
   Alert,
-  Grid,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
 } from '@mui/material';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 
-import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import moment, { Moment } from 'moment';
 
-import React, { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import isLoadingState from '../atoms/isLoadingAtom';
-import { getDoctors } from '../api/doctors';
 import userState from '../atoms/userAtom';
-import IAppointments from '../types/IAppointments';
 import { addAppointment } from '../api/appointment';
-import disableDates from '../utils/disableDates';
+import IAppointment from '../types/IAppointment';
+import Appointment from '../components/Appointment';
 
 type Props = {};
 
 const NewAppointment = (props: Props) => {
-  const [appointmentDate, setAppointmentDate] = React.useState<Moment | null>(
-    moment()
-  );
   const [apiError, setApiError] = useState<string | null>(null);
-
-  const [appointments, setAppointments] = useState<IAppointments[]>([]);
-
-  const [selectedDoctor, setselectedDoctor] = useState<
-    IAppointments | undefined
-  >();
-
-  const [selectedDate, setselectedDate] = useState<Moment | undefined>(
-    undefined
-  );
 
   const user = useRecoilValue(userState);
 
   const setIsLoading = useSetRecoilState(isLoadingState);
 
-  useEffect(() => {
-    setIsLoading(true);
+  const formActionSubmit = (appointment: IAppointment) => {
     if (user && user.token) {
-      getDoctors(user.token, moment().format('YYYY-MM-DD'))
-        .then((res) => {
-          setApiError(null);
-          setAppointments(res.data as IAppointments[]);
-        })
-        .catch((error) => {
-          setApiError(error.response.data.message);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  }, [setIsLoading, user]);
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (selectedDoctor && selectedDate && user && user.token) {
       setIsLoading(true);
       addAppointment(
         {
-          doctorId: selectedDoctor.doctor._id,
-          date: selectedDate,
-          description: `Appointment done by the application on ${moment()}`,
+          doctorId: appointment.doctorId,
+          date: appointment.date,
+          description: appointment.description,
         },
         user.token
       )
         .then((res) => {
           setApiError(null);
-          const newAppointments = appointments.filter((a) => {
-            if (a.doctor._id === selectedDoctor.doctor._id) {
-              const newAvailableAppointments = a.availableAppointmens.filter(
-                (aa) => aa !== selectedDate.toString()
-              );
-              a.availableAppointmens = newAvailableAppointments;
-              return a;
-            } else {
-              return a;
-            }
-          });
-          setAppointments(newAppointments);
-          setselectedDoctor(undefined);
-          setselectedDate(undefined);
         })
         .catch((error) => {
           setApiError(error.response.data.message);
@@ -103,39 +49,6 @@ const NewAppointment = (props: Props) => {
           setIsLoading(false);
         });
     }
-  };
-
-  const handleAppointmentDateChange = (newDate: moment.Moment | null) => {
-    setIsLoading(true);
-    if (user && user.token) {
-      if (newDate !== null) {
-        getDoctors(user.token, newDate.format('YYYY-MM-DD'))
-          .then((res) => {
-            setAppointments(res.data as IAppointments[]);
-          })
-          .catch((error) => {
-            setApiError(error.response.data.message);
-          })
-          .finally(() => {
-            setIsLoading(false);
-            setAppointmentDate(newDate);
-            setselectedDoctor(undefined);
-            setselectedDate(undefined);
-          });
-      }
-    }
-  };
-
-  const handleDoctorChange = (event: SelectChangeEvent<any>) => {
-    const doctor = appointments.find(
-      (a) => a.doctor._id === event.target.value
-    );
-    setselectedDoctor(doctor);
-    setselectedDate(undefined);
-  };
-
-  const handleDateChange = (event: SelectChangeEvent<any>) => {
-    setselectedDate(event.target.value);
   };
 
   return (
@@ -159,86 +72,11 @@ const NewAppointment = (props: Props) => {
 
           {!!apiError && <Alert severity="error">{apiError}</Alert>}
 
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 1 }}
-          >
-            <Typography component="h6" variant="h6">
-              Select a day:
-            </Typography>
-            <DateCalendar
-              value={appointmentDate}
-              onChange={handleAppointmentDateChange}
-              disablePast
-              shouldDisableDate={disableDates}
-            />
-            {appointments.length > 0 && (
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography component="h6" variant="h6">
-                    Select a doctor:
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <FormControl sx={{ m: 0, minWidth: 120 }} size="small">
-                    <InputLabel>Doctor</InputLabel>
-                    <Select
-                      value={selectedDoctor?.doctor._id || ''}
-                      label="Age"
-                      onChange={handleDoctorChange}
-                    >
-                      {appointments.map((appointment) => (
-                        <MenuItem
-                          key={appointment.doctor._id}
-                          value={appointment.doctor._id}
-                        >
-                          {appointment.doctor.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-              </Grid>
-            )}
-            {selectedDoctor !== undefined && (
-              <Grid container sx={{ mt: 0.5 }} spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography component="h6" variant="h6">
-                    Select an hour:
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <FormControl sx={{ m: 0, minWidth: 120 }} size="small">
-                    <InputLabel>Date</InputLabel>
-                    <Select
-                      value={selectedDate || ''}
-                      label="Age"
-                      onChange={handleDateChange}
-                    >
-                      {selectedDoctor.availableAppointmens.map(
-                        (appointment) => (
-                          <MenuItem key={appointment} value={appointment}>
-                            {moment(appointment).format('hh:mm A')}
-                          </MenuItem>
-                        )
-                      )}
-                    </Select>
-                  </FormControl>
-                </Grid>
-              </Grid>
-            )}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              disabled={!selectedDoctor || !selectedDate}
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Confirm Appointment
-            </Button>
-          </Box>
+          <Appointment
+            buttonText="Confirm appoinment"
+            formActionSubmit={formActionSubmit}
+            setApiError={setApiError}
+          ></Appointment>
         </Box>
       </Container>
     </LocalizationProvider>
