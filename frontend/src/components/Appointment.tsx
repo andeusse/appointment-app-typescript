@@ -57,7 +57,19 @@ const Appointment = (props: Props) => {
       getDoctors(user.token, queryDate)
         .then((res) => {
           setApiError(null);
-          setAppointments(res.data as IAvailableAppointments[]);
+          if (!appointment) {
+            setAppointments(res.data as IAvailableAppointments[]);
+          } else {
+            setAppointmentDate(moment(appointment.date));
+            setAppointments(() => {
+              const newValues = res.data as IAvailableAppointments[];
+              setselectedDoctor(
+                newValues.find((a) => a.doctor.name === appointment.doctorName)
+              );
+              return newValues;
+            });
+            setselectedDate(appointment.date);
+          }
         })
         .catch((error) => {
           setApiError(error.response.data.message);
@@ -66,17 +78,7 @@ const Appointment = (props: Props) => {
           setIsLoading(false);
         });
     }
-  }, [user, appointment, setApiError, setIsLoading]);
-
-  // useEffect(() => {
-  //   if (appointment) {
-  //     setAppointmentDate(moment(appointment.date));
-  //     setselectedDoctor(
-  //       appointments.find((a) => a.doctor.name === appointment.doctorName)
-  //     );
-  //     setselectedDate(appointment.date);
-  //   }
-  // }, [appointment, appointments]);
+  }, [appointment, setApiError, setIsLoading, user]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -89,17 +91,16 @@ const Appointment = (props: Props) => {
           date: selectedDate,
           description: `Appointment done by the application on ${moment()}`,
         });
+      } else {
+        formActionSubmit(
+          {
+            doctorId: selectedDoctor.doctor._id,
+            date: selectedDate,
+            description: `Appointment done by the application on ${moment()}`,
+          },
+          appointment._id
+        );
       }
-      // else {
-      //   formActionSubmit(
-      //     {
-      //       doctorId: selectedDoctor.doctor._id,
-      //       date: selectedDate,
-      //       description: `Appointment done by the application on ${moment()}`,
-      //     },
-      //     appointment._id
-      //   );
-      // }
     }
   };
 
@@ -196,7 +197,8 @@ const Appointment = (props: Props) => {
                   </MenuItem>
                 ))}
                 {appointment !== undefined &&
-                  selectedDoctor.doctor.name === appointment.doctorName && (
+                  selectedDoctor.doctor.name === appointment.doctorName &&
+                  selectedDate === appointment.date && (
                     <MenuItem
                       key={appointment.date.toString()}
                       value={appointment.date.toString()}

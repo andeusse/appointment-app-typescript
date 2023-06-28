@@ -59,7 +59,29 @@ const Appointments = (props: Props) => {
 
   const formActionSubmit = (appointment: IAppointment, _id?: string) => {
     if (user && user.token && _id) {
-      changeAppointment(_id, appointment, user.token);
+      setOpen(false);
+      changeAppointment(_id, appointment, user.token)
+        .then((res) => {
+          setApiError(null);
+        })
+        .catch((error) => {
+          setApiError(error.response.data.message);
+        })
+        .finally(() => {
+          if (user && user.token) {
+            setIsLoading(true);
+            getAppointments(user.token)
+              .then((res) => {
+                setAppointments(res.data as IUserAppointment[]);
+              })
+              .catch((error) => {
+                setApiError(error.response.data.message);
+              })
+              .finally(() => {
+                setIsLoading(false);
+              });
+          }
+        });
     }
   };
 
