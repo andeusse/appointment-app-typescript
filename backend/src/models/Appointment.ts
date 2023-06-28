@@ -52,6 +52,10 @@ appointmentSchema.pre(
       return next(new Error('Doctor does not exist'));
     }
 
+    if (String(appointment.userId) === String(appointment.doctorId)) {
+      return next(new Error('Doctor and user are the same'));
+    }
+
     if (await checkDate('doctorId', appointment)) {
       return next(new Error('Doctor has already an appointment in that date'));
     }

@@ -175,7 +175,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-05-10 11:00:00\",\r\n    \"doctorId\": \"64542702c96c80d90f2ae516\"\r\n}",
+					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-07-31 11:00:00\",\r\n    \"doctorId\": \"000000000000000000000002\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -212,7 +212,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-05-10 11:00:00\",\r\n    \"doctorId\": \"000000000000000000000001\"\r\n}",
+					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-07-31 11:00:00\",\r\n    \"doctorId\": \"000000000000000000000001\",\r\n    \"attended\": false\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
