@@ -4,6 +4,7 @@ import {
   IAppointment,
   IAppointmentMethods,
 } from '../types/Appointment';
+import User from './User';
 
 const appointmentSchema = new mongoose.Schema<
   IAppointment,
@@ -45,38 +46,35 @@ appointmentSchema.pre(
   async function (next: mongoose.CallbackWithoutResultAndOptionalError) {
     const appointment = this;
 
-    if (
-      await checkDate(
-        'doctorId',
-        appointment.doctorId,
-        appointment.date.toISOString()
-      )
-    ) {
+    const doctor = await User.findById(appointment.doctorId);
+
+    if (doctor === null) {
+      return next(new Error('Doctor does not exist'));
+    }
+
+    if (await checkDate('doctorId', appointment)) {
       return next(new Error('Doctor has already an appointment in that date'));
     }
-    if (
-      await checkDate(
-        'userId',
-        appointment.userId,
-        appointment.date.toISOString()
-      )
-    ) {
+    if (await checkDate('userId', appointment)) {
       return next(new Error('User has already an appointment in that date'));
     }
     return next();
   }
 );
 
-const checkDate = async (userToCheck: string, id: ObjectId, date: string) => {
+const checkDate = async (userToCheck: string, appointment: any) => {
   const Appointment = mongoose.model<IAppointment, AppointmentModel>(
     'Appointment'
   );
   const appointments = await Appointment.find({
-    [userToCheck]: id,
+    [userToCheck]: appointment[userToCheck],
+    _id: { $ne: appointment._id },
   });
 
   if (
-    appointments.filter((app) => app.date.toISOString() === date).length !== 0
+    appointments.filter(
+      (a) => a.date.toISOString() === appointment.date.toISOString()
+    ).length !== 0
   ) {
     return true;
   }
