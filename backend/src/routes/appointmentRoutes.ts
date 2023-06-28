@@ -66,8 +66,12 @@ router.post('/appointments', async (req: Request, res: Response) => {
 
 router.put('/appointments/:id', async (req: Request, res: Response) => {
   const appointmentId = req.params.id;
-  const { date, description, doctorId } = (<RequestWithUserAppointment>req)
-    .body;
+  const {
+    date,
+    description,
+    doctorId,
+    attended = false,
+  } = (<RequestWithUserAppointment>req).body;
 
   if (!date || !description || !doctorId) {
     return res.status(422).send({
@@ -81,6 +85,7 @@ router.put('/appointments/:id', async (req: Request, res: Response) => {
     appointment.date = date;
     appointment.description = description;
     appointment.doctorId = doctorId;
+    appointment.attended = attended;
     appointment
       .save()
       .then(() => {
