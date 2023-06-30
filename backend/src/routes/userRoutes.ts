@@ -1,13 +1,13 @@
 import { Router, Request, Response } from 'express';
-import requireAdminAuth from '../middlewares/requireAdminAuthHandler/RequireAdminAuthHandlerMiddleware';
 import { UserType } from '../types/usertype';
 import User from '../models/User';
 import { RequestWithUser } from '../types/User';
 import requireAuth from '../middlewares/requireAuthHandler/RequireAuthHandlerMiddleware';
 
 const router = Router();
+router.use(requireAuth);
 
-router.use(requireAuth).put('/user', async (req, res) => {
+router.put('/user', async (req, res) => {
   const IUser = (<RequestWithUser>req).user;
   const user = await User.findById(IUser._id);
   const { email, password, name, userType } = req.body;
@@ -33,13 +33,11 @@ router.use(requireAuth).put('/user', async (req, res) => {
     user
       .save()
       .then(() => {
-        return res
-          .status(200)
-          .send({
-            email: user.email,
-            name: user.name,
-            userType: user.userType,
-          });
+        return res.status(200).send({
+          email: user.email,
+          name: user.name,
+          userType: user.userType,
+        });
       })
       .catch((error: Error) => {
         return res.status(500).send({ message: error.message });
@@ -49,14 +47,12 @@ router.use(requireAuth).put('/user', async (req, res) => {
   }
 });
 
-router
-  .use(requireAdminAuth)
-  .get('/users', async (req: Request, res: Response) => {
-    const users = await User.find().select('-password');
-    return res.status(200).send(users);
-  });
+router.get('/users', async (req: Request, res: Response) => {
+  const users = await User.find().select('-password');
+  return res.status(200).send(users);
+});
 
-router.use(requireAdminAuth).post('/users', async (req, res) => {
+router.post('/users', async (req, res) => {
   const { email, password, name, userType = UserType.Customer } = req.body;
 
   if (!email || !password || !name) {
@@ -77,7 +73,7 @@ router.use(requireAdminAuth).post('/users', async (req, res) => {
     });
 });
 
-router.use(requireAdminAuth).put('/users/:id', async (req, res) => {
+router.put('/users/:id', async (req, res) => {
   const userId = req.params.id;
   const { email, password, name, userType } = req.body;
 
@@ -113,7 +109,7 @@ router.use(requireAdminAuth).put('/users/:id', async (req, res) => {
   }
 });
 
-router.use(requireAdminAuth).delete('/users/:id', async (req, res) => {
+router.delete('/users/:id', async (req, res) => {
   const userId = req.params.id;
   User.findByIdAndDelete(userId)
     .then(() => {

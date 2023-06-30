@@ -101,6 +101,21 @@ const Appointment = (props: Props) => {
           appointment._id
         );
       }
+
+      if (user && user.token) {
+        getDoctors(user.token, appointmentDate.format('YYYY-MM-DD'))
+          .then((res) => {
+            setAppointments(res.data as IAvailableAppointments[]);
+          })
+          .catch((error) => {
+            setApiError(error.response.data.message);
+          })
+          .finally(() => {
+            setIsLoading(false);
+            setselectedDoctor(undefined);
+            setselectedDate(undefined);
+          });
+      }
     }
   };
 
@@ -163,14 +178,19 @@ const Appointment = (props: Props) => {
                 label="Age"
                 onChange={handleDoctorChange}
               >
-                {appointments.map((appointment) => (
-                  <MenuItem
-                    key={appointment.doctor._id}
-                    value={appointment.doctor._id}
-                  >
-                    {appointment.doctor.name}
-                  </MenuItem>
-                ))}
+                {appointments.map((appointment) => {
+                  if (user && user.name !== appointment.doctor.name) {
+                    return (
+                      <MenuItem
+                        key={appointment.doctor._id}
+                        value={appointment.doctor._id}
+                      >
+                        {appointment.doctor.name}
+                      </MenuItem>
+                    );
+                  }
+                  return <></>;
+                })}
               </Select>
             </FormControl>
           </Grid>
