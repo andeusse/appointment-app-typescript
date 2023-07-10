@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 
-import { RequestWithUser, UserIDJwtPayload } from '../../types/User';
-import Config from '../../config/config';
-import User from '../../models/User';
+import { RequestWithUser, UserIDJwtPayload } from '../types/User';
+import Config from '../config/config';
+import User from '../models/User';
 
 const secretKet = Config.getInstance().params.secretKey;
 

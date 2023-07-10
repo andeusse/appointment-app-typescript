@@ -13,6 +13,7 @@ import applicationRoutes from './routes/appointmentRoutes';
 import userRoutes from './routes/userRoutes';
 import doctorRoutes from './routes/doctorRoutes';
 import Config from './config/config';
+import requireAuth from './middlewares/RequireAuthHandlerMiddleware';
 
 const app: Express = express();
 const port = Config.getInstance().params.apiPort;
@@ -22,6 +23,9 @@ app.use(cors());
 
 app.use(statusRoutes);
 app.use(authRoutes);
+
+app.use(requireAuth);
+
 app.use(applicationRoutes);
 app.use(doctorRoutes);
 app.use(userRoutes);

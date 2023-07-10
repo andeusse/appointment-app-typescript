@@ -1,5 +1,4 @@
 import { Router, Request, Response } from 'express';
-import requireAuth from '../middlewares/requireAuthHandler/RequireAuthHandlerMiddleware';
 import { UserType } from '../types/usertype';
 import User from '../models/User';
 import Appointment from '../models/Appointment';
@@ -7,9 +6,8 @@ import { getDoctorAvailableAppointsments } from '../utils/getDoctorAvailableAppo
 import { RequestWithUser } from '../types/User';
 
 const router = Router();
-router.use(requireAuth);
 
-router.get('/doctors/Appointment ', async (req: Request, res: Response) => {
+router.get('/doctors/appointments', async (req: Request, res: Response) => {
   const user = (<RequestWithUser>req).user;
   const id = user._id;
   const day = req.query.day;

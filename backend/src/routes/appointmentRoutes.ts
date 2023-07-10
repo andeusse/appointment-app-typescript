@@ -2,13 +2,10 @@ import { Router, Request, Response } from 'express';
 import { Error } from 'mongoose';
 import { RequestWithUserAppointment } from '../types/Appointment';
 import { RequestWithUser } from '../types/User';
-import requireAuth from '../middlewares/requireAuthHandler/RequireAuthHandlerMiddleware';
 import Appointment from '../models/Appointment';
 import User from '../models/User';
 
 const router = Router();
-
-router.use(requireAuth);
 
 router.get('/appointments', async (req: Request, res: Response) => {
   const user = (<RequestWithUser>req).user;

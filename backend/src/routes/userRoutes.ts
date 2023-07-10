@@ -2,10 +2,8 @@ import { Router, Request, Response } from 'express';
 import { UserType } from '../types/usertype';
 import User from '../models/User';
 import { RequestWithUser } from '../types/User';
-import requireAuth from '../middlewares/requireAuthHandler/RequireAuthHandlerMiddleware';
 
 const router = Router();
-router.use(requireAuth);
 
 router.put('/user', async (req, res) => {
   const IUser = (<RequestWithUser>req).user;
