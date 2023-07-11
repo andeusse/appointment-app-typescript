@@ -1,13 +1,13 @@
 import api from './api';
 
-export const getDoctors = (token: string, day: string) => {
+export const getDoctorsAppointments = (token: string, day: string) => {
   return api.get(`/doctors?day=${day}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
-export const getDoctor = (token: string, id: string, day: string) => {
-  return api.get(`/doctors/${id}?day=${day}`, {
+export const getDoctorAppointments = (token: string, day: string) => {
+  return api.get(`/doctors/appointments?day=${day}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };

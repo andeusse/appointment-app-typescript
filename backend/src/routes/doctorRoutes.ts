@@ -34,6 +34,8 @@ router.get('/doctors/appointments', async (req: Request, res: Response) => {
             appointmentWithUser.push({
               _id: appointments[i]._id,
               date: appointments[i].date,
+              description: appointments[i].description,
+              doctorId: appointments[i].doctorId,
               userName: user?.name,
               attended: appointments[i].attended,
             });

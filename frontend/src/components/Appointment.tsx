@@ -14,7 +14,7 @@ import {
 import { DateCalendar } from '@mui/x-date-pickers';
 import moment, { Moment } from 'moment';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { getDoctors } from '../api/doctors';
+import { getDoctorsAppointments } from '../api/doctors';
 import isLoadingState from '../atoms/isLoadingAtom';
 import userState from '../atoms/userAtom';
 import IAvailableAppointments from '../types/IAppointments';
@@ -54,7 +54,7 @@ const Appointment = (props: Props) => {
       const queryDate = (
         appointment ? moment(appointment.date) : moment()
       ).format('YYYY-MM-DD');
-      getDoctors(user.token, queryDate)
+      getDoctorsAppointments(user.token, queryDate)
         .then((res) => {
           setApiError(null);
           if (!appointment) {
@@ -103,7 +103,7 @@ const Appointment = (props: Props) => {
       }
 
       if (user && user.token) {
-        getDoctors(user.token, appointmentDate.format('YYYY-MM-DD'))
+        getDoctorsAppointments(user.token, appointmentDate.format('YYYY-MM-DD'))
           .then((res) => {
             setAppointments(res.data as IAvailableAppointments[]);
           })
@@ -123,7 +123,7 @@ const Appointment = (props: Props) => {
     setIsLoading(true);
     if (user && user.token) {
       if (newDate !== null) {
-        getDoctors(user.token, newDate.format('YYYY-MM-DD'))
+        getDoctorsAppointments(user.token, newDate.format('YYYY-MM-DD'))
           .then((res) => {
             setAppointments(res.data as IAvailableAppointments[]);
           })
@@ -189,7 +189,6 @@ const Appointment = (props: Props) => {
                       </MenuItem>
                     );
                   }
-                  return <></>;
                 })}
               </Select>
             </FormControl>

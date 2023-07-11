@@ -4,6 +4,7 @@ export default interface IAppointment {
   description: string;
   date: Moment;
   doctorId: string;
+  attended?: boolean;
 }
 
 export interface IUserAppointment {

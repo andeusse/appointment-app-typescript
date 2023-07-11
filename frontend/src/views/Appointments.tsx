@@ -57,6 +57,23 @@ const Appointments = (props: Props) => {
 
   const [apiError, setApiError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (user && user.token) {
+      setIsLoading(true);
+      getAppointments(user.token)
+        .then((res) => {
+          setApiError(null);
+          setAppointments(res.data as IUserAppointment[]);
+        })
+        .catch((error) => {
+          setApiError(error.response.data.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [setIsLoading, user]);
+
   const formActionSubmit = (appointment: IAppointment, _id?: string) => {
     if (user && user.token && _id) {
       setOpen(false);
@@ -101,23 +118,6 @@ const Appointments = (props: Props) => {
         });
     }
   };
-
-  useEffect(() => {
-    if (user && user.token) {
-      setIsLoading(true);
-      getAppointments(user.token)
-        .then((res) => {
-          setApiError(null);
-          setAppointments(res.data as IUserAppointment[]);
-        })
-        .catch((error) => {
-          setApiError(error.response.data.message);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  }, [setIsLoading, user]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>

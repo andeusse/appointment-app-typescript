@@ -37,9 +37,8 @@ const App = (props: Props) => {
   return (
     <ThemeProvider theme={themeMode}>
       <CssBaseline />
-      {/* <NavigationBar user={user}></NavigationBar> */}
-      <Router user={user}></Router>
       <IsLoading isLoading={isLoading}></IsLoading>
+      <Router user={user}></Router>
     </ThemeProvider>
   );
 };
