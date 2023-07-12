@@ -95,6 +95,32 @@
 			"response": []
 		},
 		{
+			"name": "SigninDoctor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"email\": \"email1@email.com\",\r\n     \"password\": \"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/signin",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Signup",
 			"request": {
 				"method": "POST",
@@ -212,7 +238,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-07-31 11:00:00\",\r\n    \"doctorId\": \"000000000000000000000001\",\r\n    \"attended\": false\r\n}",
+					"raw": "{\r\n    \"description\": \"{{date}}\",\r\n    \"date\": \"2023-07-31 12:00:00\",\r\n    \"doctorId\": \"000000000000000000000001\",\r\n    \"attended\": false\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -253,13 +279,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{URL}}/appointments/000000000000000000000101",
+					"raw": "{{URL}}/appointments/000000000000000000000110",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
 						"appointments",
-						"000000000000000000000101"
+						"000000000000000000000110"
 					]
 				}
 			},
@@ -281,12 +307,46 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{URL}}/doctors?day=2023-05-10",
+					"raw": "{{URL}}/doctors?day=2023-07-11",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
 						"doctors"
+					],
+					"query": [
+						{
+							"key": "day",
+							"value": "2023-07-11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Doctors/appointments",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{doctor_auth}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/doctors/appointments?day=2023-05-10",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"doctors",
+						"appointments"
 					],
 					"query": [
 						{
@@ -299,14 +359,14 @@
 			"response": []
 		},
 		{
-			"name": "Doctors/id",
+			"name": "Doctors/appointments/id",
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{customer_auth}}",
+							"value": "{{doctor_auth}}",
 							"type": "string"
 						}
 					]
@@ -314,12 +374,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{URL}}/doctors/000000000000000000000001?day=2023-05-10",
+					"raw": "{{URL}}/doctors/appointments/000000000000000000000001?day=2023-05-10",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
 						"doctors",
+						"appointments",
 						"000000000000000000000001"
 					],
 					"query": [
@@ -420,13 +481,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{URL}}/users/000000000000000000000001",
+					"raw": "{{URL}}/users/64aebd560f1feee32644d23a",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
 						"users",
-						"000000000000000000000001"
+						"64aebd560f1feee32644d23a"
 					]
 				}
 			},
@@ -449,7 +510,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"email15@email.com\",\r\n    \"name\": \"Andrés Giraldo\"\r\n}",
+					"raw": "{\r\n    \"email\": \"email4@email.com\",\r\n    \"name\": \"Andrés Giraldo\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
