@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { Error } from 'mongoose';
+import { Error, Schema } from 'mongoose';
 import { RequestWithUserAppointment } from '../types/Appointment';
 import { RequestWithUser } from '../types/User';
 import Appointment from '../models/Appointment';
@@ -11,7 +11,12 @@ router.get('/appointments', async (req: Request, res: Response) => {
   const user = (<RequestWithUser>req).user;
   Appointment.find({ userId: user._id })
     .then(async (appointments) => {
-      let appointmentsWithDoctor = [];
+      let appointmentsWithDoctor: {
+        _id: Schema.Types.ObjectId;
+        date: Date;
+        attended: boolean;
+        doctorName: string | undefined;
+      }[] = [];
       for (let i = 0; i < appointments.length; i++) {
         const doctor = await User.findById(appointments[i].doctorId).select([
           'name',

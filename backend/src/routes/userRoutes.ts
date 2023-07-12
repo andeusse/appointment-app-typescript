@@ -5,6 +5,41 @@ import { RequestWithUser } from '../types/User';
 
 const router = Router();
 
+router.get('/users', async (req: Request, res: Response) => {
+  const filter = req.query.filter as UserType | undefined;
+
+  let users = [];
+  if (filter !== undefined) {
+    users = (await User.find().select('-password')).filter(
+      (a) => a.userType === filter
+    );
+  } else {
+    users = await User.find().select('-password');
+  }
+  return res.status(200).send(users);
+});
+
+router.post('/users', async (req, res) => {
+  const { email, password, name, userType = UserType.Customer } = req.body;
+
+  if (!email || !password || !name) {
+    return res
+      .status(422)
+      .send({ message: 'Mush provide email, name and password' });
+  }
+
+  const user = new User({ email, password, name, userType });
+
+  user
+    .save()
+    .then(() => {
+      return res.send({ email, name, userType });
+    })
+    .catch((error: Error) => {
+      return res.status(422).send({ message: 'Email already in use' });
+    });
+});
+
 router.put('/user', async (req, res) => {
   const IUser = (<RequestWithUser>req).user;
   const user = await User.findById(IUser._id);
@@ -43,32 +78,6 @@ router.put('/user', async (req, res) => {
   } else {
     return res.status(422).send({ message: 'User not found' });
   }
-});
-
-router.get('/users', async (req: Request, res: Response) => {
-  const users = await User.find().select('-password');
-  return res.status(200).send(users);
-});
-
-router.post('/users', async (req, res) => {
-  const { email, password, name, userType = UserType.Customer } = req.body;
-
-  if (!email || !password || !name) {
-    return res
-      .status(422)
-      .send({ message: 'Mush provide email, name and password' });
-  }
-
-  const user = new User({ email, password, name, userType });
-
-  user
-    .save()
-    .then(() => {
-      return res.send({ email, name, userType });
-    })
-    .catch((error: Error) => {
-      return res.status(422).send({ message: 'Email already in use' });
-    });
 });
 
 router.put('/users/:id', async (req, res) => {

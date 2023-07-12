@@ -40,7 +40,9 @@ router.get('/doctors/appointments', async (req: Request, res: Response) => {
               attended: appointments[i].attended,
             });
           }
-
+          appointmentWithUser.sort(
+            (a, b) => b.date.getTime() - a.date.getTime()
+          );
           return res.status(200).send({ appointments: appointmentWithUser });
         } else {
           return res
