@@ -4,6 +4,7 @@ import User from '../models/User';
 import Appointment from '../models/Appointment';
 import { getDoctorAvailableAppointsments } from '../utils/getDoctorAvailableAppointments';
 import { RequestWithUser } from '../types/User';
+import { Schema } from 'mongoose';
 
 const router = Router();
 
@@ -18,37 +19,37 @@ router.get('/doctors/appointments', async (req: Request, res: Response) => {
         return res.status(400).send({ message: 'You must enter a day' });
       }
       if (typeof day === 'string') {
-        if (Date.parse(day)) {
-          const startDay = new Date(day);
-          const endDay = new Date(startDay);
-          endDay.setDate(endDay.getDate() + 1);
-          const appointments = await Appointment.find({
-            doctorId: id,
-            date: { $gte: startDay, $lte: endDay },
-          });
+        return res
+          .status(200)
+          .send({ appointments: await getAppointmentsWithUser(day, id) });
+      } else {
+        return res
+          .status(400)
+          .send({ message: 'The date has no the correct format' });
+      }
+    })
+    .catch((error: Error) => {
+      return res.status(404).send({ message: 'Doctor not found' });
+    });
+});
 
-          const appointmentWithUser = [];
+router.get('/doctors/appointments/:id', async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const day = req.query.day;
 
-          for (let i = 0; i < appointments.length; i++) {
-            const user = await User.findById(appointments[i].userId);
-            appointmentWithUser.push({
-              _id: appointments[i]._id,
-              date: appointments[i].date,
-              description: appointments[i].description,
-              doctorId: appointments[i].doctorId,
-              userName: user?.name,
-              attended: appointments[i].attended,
-            });
-          }
-          appointmentWithUser.sort(
-            (a, b) => b.date.getTime() - a.date.getTime()
-          );
-          return res.status(200).send({ appointments: appointmentWithUser });
-        } else {
-          return res
-            .status(400)
-            .send({ message: 'The date has no the correct format' });
-        }
+  User.findById(id)
+    .then(async () => {
+      if (!day) {
+        return res.status(400).send({ message: 'You must enter a day' });
+      }
+      if (typeof day === 'string') {
+        return res
+          .status(200)
+          .send({ appointments: await getAppointmentsWithUser(day, id) });
+      } else {
+        return res
+          .status(400)
+          .send({ message: 'The date has no the correct format' });
       }
     })
     .catch((error: Error) => {
@@ -103,5 +104,36 @@ router.get('/doctors', async (req: Request, res: Response) => {
         .send({ message: 'Error with finding the doctors, try again' });
     });
 });
+
+const getAppointmentsWithUser = async (
+  day: string,
+  id: Schema.Types.ObjectId | string
+) => {
+  if (Date.parse(day)) {
+    const startDay = new Date(day);
+    const endDay = new Date(startDay);
+    endDay.setDate(endDay.getDate() + 1);
+    const appointments = await Appointment.find({
+      doctorId: id,
+      date: { $gte: startDay, $lte: endDay },
+    });
+
+    const appointmentWithUser = [];
+
+    for (let i = 0; i < appointments.length; i++) {
+      const user = await User.findById(appointments[i].userId);
+      appointmentWithUser.push({
+        _id: appointments[i]._id,
+        date: appointments[i].date,
+        description: appointments[i].description,
+        doctorId: appointments[i].doctorId,
+        userName: user?.name,
+        attended: appointments[i].attended,
+      });
+    }
+    appointmentWithUser.sort((a, b) => b.date.getTime() - a.date.getTime());
+    return appointmentWithUser;
+  }
+};
 
 export default router;
