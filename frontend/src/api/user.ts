@@ -1,8 +1,13 @@
 import api from './api';
 import IUser from '../types/IUser';
+import { UserType } from '../types/usertype';
 
-export const getUsers = (token: string) => {
-  return api.get('/users', {
+export const getUsers = (token: string, filter: UserType | undefined) => {
+  let query = '/users';
+  if (filter !== undefined) {
+    query = `/users?filter=${filter}`;
+  }
+  return api.get(query, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };

@@ -8,3 +8,10 @@ export default interface User {
   confirmPassword?: string | undefined;
   token?: string;
 }
+
+export interface IUser {
+  _id: string;
+  email: string;
+  name: string;
+  userType: UserType;
+}
