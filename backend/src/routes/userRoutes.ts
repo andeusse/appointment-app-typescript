@@ -16,7 +16,9 @@ router.get('/users', async (req: Request, res: Response) => {
   } else {
     users = await User.find().select('-password');
   }
-  return res.status(200).send(users);
+  return res
+    .status(200)
+    .send(users.sort((a, b) => (a.userType > b.userType ? 1 : -1)));
 });
 
 router.post('/users', async (req, res) => {
