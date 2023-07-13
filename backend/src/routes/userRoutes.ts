@@ -18,7 +18,17 @@ router.get('/users', async (req: Request, res: Response) => {
   }
   return res
     .status(200)
-    .send(users.sort((a, b) => (a.userType > b.userType ? 1 : -1)));
+    .send(
+      users.sort((a, b) =>
+        a.userType > b.userType
+          ? 1
+          : a.userType === b.userType
+          ? a.name > b.name
+            ? 1
+            : -1
+          : -1
+      )
+    );
 });
 
 router.post('/users', async (req, res) => {
