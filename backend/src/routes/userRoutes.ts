@@ -53,8 +53,8 @@ router.post('/users', async (req, res) => {
 });
 
 router.put('/user', async (req, res) => {
-  const IUser = (<RequestWithUser>req).user;
-  const user = await User.findById(IUser._id);
+  const reqUser = (<RequestWithUser>req).user;
+  const user = await User.findById(reqUser._id);
   const { email, password, name, userType } = req.body;
 
   if (user) {
